@@ -7,13 +7,13 @@ namespace AlphabetSoup.Core
     [Flags]
     public enum Directions
     {
-        N,
-        NE,
-        E,
-        SE,
-        S,
-        SW,
-        W,
-        NW
+        N = 1,
+        NE = 2,
+        E = 4,
+        SE = 8,
+        S = 16,
+        SW = 32,
+        W = 64,
+        NW = 128
     }
 }

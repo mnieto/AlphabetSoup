@@ -15,10 +15,11 @@ namespace AlphabetSoup.Core
         /// Language identifier. Should be a <see cref="System.Globalization.CultureInfo" /> 2 letters or 4 letters code
         /// </summary>
         public string Code { get; set; }
+
         /// <summary>
-        /// File name with words definition for this language
+        /// List of words definition for this language
         /// </summary>
-        public string LemmataFile { get; set; }
+        public List<string> Lemmata{ get; set; }
 
         /// <summary>
         /// Valid letters for this language

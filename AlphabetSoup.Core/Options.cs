@@ -26,7 +26,7 @@ namespace AlphabetSoup.Core
         /// If this option is used, the <see cref="LanguageData.LemmataFile"/> file is ignored. If this option is null or empty, the words are picked from the see <cref="LanguageData.LemmataFile"/>.
         /// </para>
         /// </remarks>
-        public IEnumerable<string> Words { get; set; }
+        public List<string> Words { get; set; }
 
         /// <summary>
         /// Number of columns and rows (square) of the alphabet soup
