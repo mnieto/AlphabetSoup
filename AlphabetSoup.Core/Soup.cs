@@ -7,7 +7,7 @@ namespace AlphabetSoup.Core {
     /// <summary>
     /// Maintains the data of the alphabet soup
     /// </summary>
-    class Soup {
+    public class Soup {
 
         /// <summary>
         /// The soup itself

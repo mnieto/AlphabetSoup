@@ -42,6 +42,13 @@ namespace AlpabetSoup.Core.Test {
             Assert.Equal(generator.Options.NumWords, sut.UsedWords.Count);
         }
 
+        [Fact]
+        public void GeneratorHasDefaultRules() {
+            var generator = InitGenerator();
+
+            Assert.Equal(2, generator.Rules.Count);
+        }
+
         private SoupGenerator InitGenerator() {
             return new SoupGenerator(new Options {
                 CultureCode = "es-es",

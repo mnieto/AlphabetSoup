@@ -53,6 +53,11 @@ namespace AlphabetSoup.Core
         /// </summary>
         public int MaxLength { get; set; }
 
+        /// <summary>
+        /// List of rules that new <see cref="WordEntry"/> must satisfy to be added to a <see cref="Soup"/> object. If this property is null a default rule set is created
+        /// </summary>
+        public List<IRule> Rules { get; set; }
+
 
     }
 }

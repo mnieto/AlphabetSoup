@@ -27,6 +27,8 @@ namespace AlphabetSoup.Core {
         /// </summary>
         internal Directions[] AllowedDirections { get; private set; }
 
+        internal List<IRule> Rules { get; private set; }
+
         /// <summary>
         /// <see cref="Options"/> used to configure this generator. 
         /// After <see cref="SoupGenerator.SoupGenerator(Options)"/> constructor, any changes in the options will be ignored
@@ -55,6 +57,10 @@ namespace AlphabetSoup.Core {
             }
             Letters = data.Letters;
             AllowedDirections = GetDirections(options.AllowedDirections);
+            if (options.Rules != null && options.Rules.Count > 0)
+                Rules = options.Rules;
+            else
+                Rules = StandardRules();
         }
 
         /// <summary>
@@ -79,7 +85,7 @@ namespace AlphabetSoup.Core {
         /// <returns>The reated <see cref="Soup"/></returns>
         internal Soup Create() {
             for (int i = 0; i < Options.NumWords; i++) {
-                bool added = false;
+                bool failed = false;
                 do {
                     int index = random.Next(Words.Count - 1);
                     string word = Words[index];
@@ -90,10 +96,15 @@ namespace AlphabetSoup.Core {
                             Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
                             Name = word
                         };
-                        if (!IsOverlapped(wordEntry) && HaveSpace(wordEntry))
-                            added = true;
+
+                        foreach (IRule rule in Rules) {
+                            if (!rule.Check(Soup, wordEntry)) {
+                                failed = true;
+                                break;
+                            }
+                        }
                     }
-                } while (!added);
+                } while (failed);
             }
             return Soup;
         }
@@ -113,74 +124,6 @@ namespace AlphabetSoup.Core {
         }
 
         /// <summary>
-        /// A word overlaps any of the already positioned word?
-        /// </summary>
-        /// <param name="entry"><see cref="WordEntry"/> to be positioned in the <see cref="Soup"/></param>
-        /// <returns><c>true</c> if is completely overlapped</returns>
-        protected bool IsOverlapped(WordEntry entry) {
-            foreach (WordEntry item in Soup.UsedWords.Values) {
-                if (item.Direction.SameDirection(entry.Direction)) {
-                    if (item.Name.Length >= entry.Name.Length) {
-                        if (IsOverlapped(item, entry))
-                            return true;
-                    } else {
-                        if (IsOverlapped(entry, item))
-                            return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Determines if the length from the origin coordinate to the end of the <see cref="Soup.Matrix"/> (in the <see cref="Directions"/> direction is equal or greather than the length of the word
-        /// </summary>
-        /// <param name="wordEntry"><see cref="WordEntry"/> to be positioned in the <see cref="Soup"/></param>
-        protected bool HaveSpace(WordEntry wordEntry) {
-            bool haveHorizontalSpace = false;
-            bool haveVerticalSpace = false;
-            int wordLength = wordEntry.Name.Length;
-
-            //X
-            switch (wordEntry.Direction) {
-                case Directions.N:
-                case Directions.S:
-                    haveHorizontalSpace = true;
-                    break;
-                case Directions.E:
-                case Directions.NE:
-                case Directions.SE:
-                    haveHorizontalSpace = Soup.Matrix.GetLength(0) - wordLength >= wordEntry.X;
-                    break;
-                case Directions.W:
-                case Directions.NW:
-                case Directions.SW:
-                    haveHorizontalSpace = wordEntry.X - wordLength >= 0;
-                    break;
-            }
-
-            //Y
-            switch (wordEntry.Direction) {
-                case Directions.E:
-                case Directions.W:
-                    haveVerticalSpace = true;
-                    break;
-                case Directions.N:
-                case Directions.NE:
-                case Directions.NW:
-                    haveVerticalSpace = Soup.Matrix.GetLength(1) - wordLength >= wordEntry.Y;
-                    break;
-                case Directions.S:
-                case Directions.SE:
-                case Directions.SW:
-                    haveVerticalSpace = wordEntry.Y - wordLength >= 0;
-                    break;
-            }
-
-            return haveHorizontalSpace && haveVerticalSpace;
-        }
-
-        /// <summary>
         /// Reads de data associated to a language
         /// </summary>
         /// <returns>A initialized <see cref="LanguageData"/></returns>
@@ -189,18 +132,13 @@ namespace AlphabetSoup.Core {
             return configuration.ReadLanguageData(Options.CultureCode, Options.Words != null && Options.Words.Count() == 0);
         }
 
-
-        private bool IsOverlapped(WordEntry bigWord, WordEntry smallWord) {
-            var big = bigWord.AbsoluteOrigin();
-            var small = smallWord.AbsoluteOrigin();
-            bool overlapp = false;
-            if (bigWord.Direction.MovesHorizontal()) {
-                overlapp = small.X >= big.X && small.X + smallWord.Name.Length <= big.X + bigWord.Name.Length;
-            }
-            if (!overlapp && bigWord.Direction.MovesVertical()) {
-                overlapp = small.Y >= big.Y && small.Y + smallWord.Name.Length <= big.Y + bigWord.Name.Length;
-            }
-            return overlapp;
+        protected List<IRule> StandardRules() {
+            return new List<IRule> {
+                new HaveSpace(),
+                new NotOverlapped(),
+            };
         }
+
+
     }
 }
