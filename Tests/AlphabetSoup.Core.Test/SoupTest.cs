@@ -21,7 +21,7 @@ namespace AlphabetSoup.Core.Test {
         [InlineData(5, 3, 9, 3, Directions.W)]
         [InlineData(5, 3, 9, 7, Directions.SW)]
         public void AbsoluteOriginTest(int expectedX, int expectedY, int x, int y, Directions direction) {
-            Word entry = new Word {
+            WordEntry entry = new WordEntry {
                 X = x,
                 Y = y,
                 Direction = direction,

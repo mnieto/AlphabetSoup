@@ -17,7 +17,7 @@ namespace AlphabetSoup.Core {
         /// <summary>
         /// The list of used words to build the alphabet soup
         /// </summary>
-        public Dictionary<string, Word> UsedWords { get; set; }
+        public Dictionary<string, WordEntry> UsedWords { get; set; }
 
 
         /// <summary>

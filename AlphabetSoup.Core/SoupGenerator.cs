@@ -84,7 +84,7 @@ namespace AlphabetSoup.Core {
                     int index = random.Next(Words.Count - 1);
                     string word = Words[index];
                     if (!Soup.UsedWords.ContainsKey(word)) {
-                        Word wordEntry = new Word {
+                        WordEntry wordEntry = new WordEntry {
                             X = random.Next(Options.Size - 1),
                             Y = random.Next(Options.Size - 1),
                             Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
@@ -115,16 +115,16 @@ namespace AlphabetSoup.Core {
         /// <summary>
         /// A word overlaps any of the already positioned word?
         /// </summary>
-        /// <param name="wordEntry"><see cref="Word"/> to be positioned in the <see cref="Soup"/></param>
+        /// <param name="entry"><see cref="WordEntry"/> to be positioned in the <see cref="Soup"/></param>
         /// <returns><c>true</c> if is completely overlapped</returns>
-        protected bool IsOverlapped(Word wordEntry) {
-            foreach (Word item in Soup.UsedWords.Values) {
-                if (item.Direction.SameDirection(wordEntry.Direction)) {
-                    if (item.Name.Length >= wordEntry.Name.Length) {
-                        if (IsOverlapped(item, wordEntry))
+        protected bool IsOverlapped(WordEntry entry) {
+            foreach (WordEntry item in Soup.UsedWords.Values) {
+                if (item.Direction.SameDirection(entry.Direction)) {
+                    if (item.Name.Length >= entry.Name.Length) {
+                        if (IsOverlapped(item, entry))
                             return true;
                     } else {
-                        if (IsOverlapped(wordEntry, item))
+                        if (IsOverlapped(entry, item))
                             return true;
                     }
                 }
@@ -135,8 +135,8 @@ namespace AlphabetSoup.Core {
         /// <summary>
         /// Determines if the length from the origin coordinate to the end of the <see cref="Soup.Matrix"/> (in the <see cref="Directions"/> direction is equal or greather than the length of the word
         /// </summary>
-        /// <param name="wordEntry"><see cref="Word"/> to be positioned in the <see cref="Soup"/></param>
-        protected bool HaveSpace(Word wordEntry) {
+        /// <param name="wordEntry"><see cref="WordEntry"/> to be positioned in the <see cref="Soup"/></param>
+        protected bool HaveSpace(WordEntry wordEntry) {
             bool haveHorizontalSpace = false;
             bool haveVerticalSpace = false;
             int wordLength = wordEntry.Name.Length;
@@ -190,7 +190,7 @@ namespace AlphabetSoup.Core {
         }
 
 
-        private bool IsOverlapped(Word bigWord, Word smallWord) {
+        private bool IsOverlapped(WordEntry bigWord, WordEntry smallWord) {
             var big = bigWord.AbsoluteOrigin();
             var small = smallWord.AbsoluteOrigin();
             bool overlapp = false;

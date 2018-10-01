@@ -7,7 +7,7 @@ namespace AlphabetSoup.Core {
     /// <summary>
     /// Word used in alphabet soup. It describes the word and location inside the soup
     /// </summary>
-    public class Word {
+    public class WordEntry {
 
         /// <summary>
         /// X origin coordinate
