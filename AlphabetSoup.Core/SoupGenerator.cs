@@ -28,7 +28,8 @@ namespace AlphabetSoup.Core {
         internal Directions[] AllowedDirections { get; private set; }
 
         /// <summary>
-        /// <see cref="Options"/> used to configure this generator
+        /// <see cref="Options"/> used to configure this generator. 
+        /// After <see cref="SoupGenerator.SoupGenerator(Options)"/> constructor, any changes in the options will be ignored
         /// </summary>
         /// 
         internal Options Options { get; private set; }
@@ -62,7 +63,7 @@ namespace AlphabetSoup.Core {
         /// <returns>Initialized <see cref="Soup"/> with random data</returns>
         internal SoupGenerator Init() {
             Soup = new Soup();
-            Soup.Matrix = new int[Options.Size, Options.Size];
+            Soup.Matrix = new char[Options.Size, Options.Size];
             for (int x = 0; x < Options.Size ; x++) {
                 for (int y = 0; y < Options.Size; y++) {
                     int i = random.Next(Letters.Length - 1);
@@ -89,7 +90,7 @@ namespace AlphabetSoup.Core {
                             Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
                             Name = word
                         };
-                        if (!IsOverlapped(wordEntry))
+                        if (!IsOverlapped(wordEntry) && HaveSpace(wordEntry))
                             added = true;
                     }
                 } while (!added);
@@ -117,7 +118,66 @@ namespace AlphabetSoup.Core {
         /// <param name="wordEntry"><see cref="Word"/> to be positioned in the <see cref="Soup"/></param>
         /// <returns><c>true</c> if is completely overlapped</returns>
         protected bool IsOverlapped(Word wordEntry) {
+            foreach (Word item in Soup.UsedWords.Values) {
+                if (item.Direction.SameDirection(wordEntry.Direction)) {
+                    if (item.Name.Length >= wordEntry.Name.Length) {
+                        if (IsOverlapped(item, wordEntry))
+                            return true;
+                    } else {
+                        if (IsOverlapped(wordEntry, item))
+                            return true;
+                    }
+                }
+            }
             return false;
+        }
+
+        /// <summary>
+        /// Determines if the length from the origin coordinate to the end of the <see cref="Soup.Matrix"/> (in the <see cref="Directions"/> direction is equal or greather than the length of the word
+        /// </summary>
+        /// <param name="wordEntry"><see cref="Word"/> to be positioned in the <see cref="Soup"/></param>
+        protected bool HaveSpace(Word wordEntry) {
+            bool haveHorizontalSpace = false;
+            bool haveVerticalSpace = false;
+            int wordLength = wordEntry.Name.Length;
+
+            //X
+            switch (wordEntry.Direction) {
+                case Directions.N:
+                case Directions.S:
+                    haveHorizontalSpace = true;
+                    break;
+                case Directions.E:
+                case Directions.NE:
+                case Directions.SE:
+                    haveHorizontalSpace = Soup.Matrix.GetLength(0) - wordLength >= wordEntry.X;
+                    break;
+                case Directions.W:
+                case Directions.NW:
+                case Directions.SW:
+                    haveHorizontalSpace = wordEntry.X - wordLength >= 0;
+                    break;
+            }
+
+            //Y
+            switch (wordEntry.Direction) {
+                case Directions.E:
+                case Directions.W:
+                    haveVerticalSpace = true;
+                    break;
+                case Directions.N:
+                case Directions.NE:
+                case Directions.NW:
+                    haveVerticalSpace = Soup.Matrix.GetLength(1) - wordLength >= wordEntry.Y;
+                    break;
+                case Directions.S:
+                case Directions.SE:
+                case Directions.SW:
+                    haveVerticalSpace = wordEntry.Y - wordLength >= 0;
+                    break;
+            }
+
+            return haveHorizontalSpace && haveVerticalSpace;
         }
 
         /// <summary>
@@ -127,6 +187,20 @@ namespace AlphabetSoup.Core {
         protected LanguageData LoadWordsFromFile() {
             var configuration = new ConfigurationManager(new System.IO.Abstractions.FileSystem());
             return configuration.ReadLanguageData(Options.CultureCode, Options.Words != null && Options.Words.Count() == 0);
+        }
+
+
+        private bool IsOverlapped(Word bigWord, Word smallWord) {
+            var big = bigWord.AbsoluteOrigin();
+            var small = smallWord.AbsoluteOrigin();
+            bool overlapp = false;
+            if (bigWord.Direction.MovesHorizontal()) {
+                overlapp = small.X >= big.X && small.X + smallWord.Name.Length <= big.X + bigWord.Name.Length;
+            }
+            if (!overlapp && bigWord.Direction.MovesVertical()) {
+                overlapp = small.Y >= big.Y && small.Y + smallWord.Name.Length <= big.Y + bigWord.Name.Length;
+            }
+            return overlapp;
         }
     }
 }

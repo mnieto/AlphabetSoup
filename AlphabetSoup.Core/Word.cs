@@ -28,5 +28,25 @@ namespace AlphabetSoup.Core {
         /// Word itself
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public (int X, int Y) AbsoluteOrigin() {
+            if (Direction.IsReverse()) {
+                switch (Direction) {
+                    case Directions.S:
+                        return (X, Y - Name.Length + 1);
+                    case Directions.NW:
+                        return (X, Y - Name.Length + 1);
+                    case Directions.SW:
+                        return (X - Name.Length + 1, Y - Name.Length + 1);
+                    case Directions.W:
+                        return (X - Name.Length+ 1, Y);
+                }
+            }
+            return (X, Y);
+        }
     }
 }

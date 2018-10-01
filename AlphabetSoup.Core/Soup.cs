@@ -12,7 +12,7 @@ namespace AlphabetSoup.Core {
         /// <summary>
         /// The soup itself
         /// </summary>
-        public int[,] Matrix { get; set; }
+        public char[,] Matrix { get; set; }
 
         /// <summary>
         /// The list of used words to build the alphabet soup
