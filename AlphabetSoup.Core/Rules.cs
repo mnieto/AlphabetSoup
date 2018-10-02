@@ -29,7 +29,7 @@ namespace AlphabetSoup.Core {
                 case Directions.W:
                 case Directions.NW:
                 case Directions.SW:
-                    haveHorizontalSpace = entry.X - wordLength >= 0;
+                    haveHorizontalSpace = entry.X - wordLength + 1 >= 0;
                     break;
             }
 

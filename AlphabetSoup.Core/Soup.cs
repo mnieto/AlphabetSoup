@@ -19,6 +19,12 @@ namespace AlphabetSoup.Core {
         /// </summary>
         public Dictionary<string, WordEntry> UsedWords { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Soup() {
+            UsedWords = new Dictionary<string, WordEntry>();
+        }
 
         /// <summary>
         /// Generate a new alphabet soup following the directives set in the <see cref="Options"/>
