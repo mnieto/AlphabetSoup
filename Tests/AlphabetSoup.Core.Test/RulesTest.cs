@@ -40,6 +40,22 @@ namespace AlphabetSoup.Core.Test {
             Assert.False(rule.Check(soup, entry));
         }
 
+        [Fact]
+        public void NotUsedRule() {
+            Soup soup = new Soup {
+                UsedWords = new Dictionary<string, WordEntry> {
+                    { "Word1", new WordEntry { X = 1, Y = 1, Direction = Directions.E, Name = "Word1"} },
+                    { "Word2", new WordEntry { X = 1, Y = 1, Direction = Directions.E, Name = "Word2"} }
+                }
+            };
+            IRule rule = new NotUsed();
+            Assert.False(rule.Check(soup, new WordEntry { X = 2, Y = 2, Direction = Directions.W, Name = "Word2" }));
+        }
+
+        public void IsOverlappedRule() {
+
+        }
+
         private Soup InitSoup() {
             Soup soup = new Soup() {
                 Matrix = new char[10, 10]

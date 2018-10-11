@@ -46,7 +46,7 @@ namespace AlpabetSoup.Core.Test {
         public void GeneratorHasDefaultRules() {
             var generator = InitGenerator();
 
-            Assert.Equal(2, generator.Rules.Count);
+            Assert.Equal(3, generator.Rules.Count);
         }
 
         private SoupGenerator InitGenerator() {

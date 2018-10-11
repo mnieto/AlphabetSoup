@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace AlphabetSoup.Core {
 
@@ -86,8 +86,20 @@ namespace AlphabetSoup.Core {
             if (!overlapp && bigWord.Direction.MovesVertical()) {
                 overlapp = small.Y >= big.Y && small.Y + smallWord.Name.Length <= big.Y + bigWord.Name.Length;
             }
-            return overlapp;
+            return !overlapp;
         }
 
     }
+
+    /// <summary>
+    /// Checks the new word was not previously selected
+    /// </summary>
+    public class NotUsed : IRule {
+        public string Name => "Avoid use repeated word in same soup";
+
+        public bool Check(Soup soup, WordEntry entry) {
+            return !soup.UsedWords.Keys.Contains(entry.Name);
+        }
+    }
+
 }

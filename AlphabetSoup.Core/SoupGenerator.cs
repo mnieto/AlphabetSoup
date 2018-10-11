@@ -86,25 +86,28 @@ namespace AlphabetSoup.Core {
         internal Soup Create() {
             for (int i = 0; i < Options.NumWords; i++) {
                 bool failed = false;
+                WordEntry wordEntry = null;
                 do {
+                    failed = false;
                     int index = random.Next(Words.Count - 1);
                     string word = Words[index];
-                    if (!Soup.UsedWords.ContainsKey(word)) {
-                        WordEntry wordEntry = new WordEntry {
-                            X = random.Next(Options.Size - 1),
-                            Y = random.Next(Options.Size - 1),
-                            Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
-                            Name = word
-                        };
+                    
+                    wordEntry = new WordEntry {
+                        X = random.Next(Options.Size - 1),
+                        Y = random.Next(Options.Size - 1),
+                        Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
+                        Name = word
+                    };
 
-                        foreach (IRule rule in Rules) {
-                            if (!rule.Check(Soup, wordEntry)) {
-                                failed = true;
-                                break;
-                            }
+                    foreach (IRule rule in Rules) {
+                        if (!rule.Check(Soup, wordEntry)) {
+                            failed = true;
+                            break;
                         }
                     }
                 } while (failed);
+                System.Diagnostics.Debug.Assert(wordEntry != null);
+                Soup.UsedWords.Add(wordEntry.Name, wordEntry);
             }
             return Soup;
         }
@@ -134,8 +137,9 @@ namespace AlphabetSoup.Core {
 
         protected List<IRule> StandardRules() {
             return new List<IRule> {
+                new NotUsed(),
                 new HaveSpace(),
-                new NotOverlapped(),
+                new NotOverlapped()
             };
         }
 
