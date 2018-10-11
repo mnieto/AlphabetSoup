@@ -5,19 +5,13 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace AlpabetSoup.Core.Test {
+namespace AlphabetSoup.Core.Test {
     public class SoupGeneratorTest {
-
-        List<string> words;
-
-        public SoupGeneratorTest() {
-            words = new List<string> { "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "tau", "upsilon", "phi", "chi", "psi", "omega" };
-        }
 
         [Fact]
         public void MembersAreInitializedAfterConstructorInvoke() {
             var sut = InitGenerator();
-            Assert.Equal(words.Count, sut.Words.Count);
+            Assert.Equal(TestDataGenerator.Words.Count, sut.Words.Count);
             Assert.Equal(27, sut.Letters.Length);
             Assert.Single(sut.AllowedDirections);
         }
@@ -50,13 +44,7 @@ namespace AlpabetSoup.Core.Test {
         }
 
         private SoupGenerator InitGenerator() {
-            return new SoupGenerator(new Options {
-                CultureCode = "es-es",
-                NumWords = 10,
-                Size = 30,
-                Words = words,
-                AllowedDirections = Directions.E
-            });
+            return TestDataGenerator.InitGenerator();
         }
 
         protected string ReadTestFile(string path) {

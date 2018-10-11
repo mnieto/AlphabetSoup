@@ -52,7 +52,16 @@ namespace AlphabetSoup.Core.Test {
             Assert.False(rule.Check(soup, new WordEntry { X = 2, Y = 2, Direction = Directions.W, Name = "Word2" }));
         }
 
+        [Fact]
         public void IsOverlappedRule() {
+            SoupGenerator generator = TestDataGenerator.InitGenerator(allowedDirections: Directions.E | Directions.N, rules: new List<IRule> { new NotUsed() });
+            Soup soup = generator.Init().Create();
+
+            IRule rule = new NotOverlapped();
+            foreach (WordEntry entry in soup.UsedWords.Values) {
+                string testWord = entry.Name.Substring(0, 3);
+                Assert.False(rule.Check(soup, new WordEntry { X = entry.X, Y = entry.Y, Direction = entry.Direction, Name = testWord }));
+            }
 
         }
 
