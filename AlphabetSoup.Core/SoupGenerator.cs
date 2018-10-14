@@ -91,7 +91,7 @@ namespace AlphabetSoup.Core {
                     failed = false;
                     int index = random.Next(Words.Count - 1);
                     string word = Words[index];
-                    
+
                     wordEntry = new WordEntry {
                         X = random.Next(Options.Size - 1),
                         Y = random.Next(Options.Size - 1),
@@ -107,9 +107,18 @@ namespace AlphabetSoup.Core {
                     }
                 } while (failed);
                 System.Diagnostics.Debug.Assert(wordEntry != null);
-                Soup.UsedWords.Add(wordEntry.Name, wordEntry);
+                AddWord(wordEntry);
             }
             return Soup;
+        }
+
+        private void AddWord(WordEntry wordEntry) {
+            for (int i = 0; i < wordEntry.Name.Length; i++) {
+                char c = wordEntry.Name[i];
+                Point pt = wordEntry.Coordinate(i);
+                Soup.Matrix[pt.X, pt.Y] = c;
+            }
+            Soup.UsedWords.Add(wordEntry.Name, wordEntry);
         }
 
         /// <summary>
