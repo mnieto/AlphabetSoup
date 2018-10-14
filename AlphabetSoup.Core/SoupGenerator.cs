@@ -50,10 +50,10 @@ namespace AlphabetSoup.Core {
         internal SoupGenerator(Options options) {
             Options = options;
             LanguageData data = LoadWordsFromFile();
-            if (Options?.Words.Count() > 0) {
-                Words = Options.Words;
-            } else {
+            if (Options.Words == null) {
                 Words = data.Lemmata;
+            } else {
+                Words = Options.Words;
             }
             Letters = data.Letters;
             AllowedDirections = GetDirections(options.AllowedDirections);
@@ -132,7 +132,7 @@ namespace AlphabetSoup.Core {
         /// <returns>A initialized <see cref="LanguageData"/></returns>
         protected LanguageData LoadWordsFromFile() {
             var configuration = new ConfigurationManager(new System.IO.Abstractions.FileSystem());
-            return configuration.ReadLanguageData(Options.CultureCode, Options.Words != null && Options.Words.Count() == 0);
+            return configuration.ReadLanguageData(Options.CultureCode, Options.Words == null || Options.Words.Count() == 0);
         }
 
         protected List<IRule> StandardRules() {
