@@ -66,14 +66,14 @@ namespace AlphabetSoup.Core {
                 if (item.Direction.SameDirection(entry.Direction)) {
                     if (item.Name.Length >= entry.Name.Length) {
                         if (IsOverlapped(item, entry))
-                            return true;
+                            return false;
                     } else {
                         if (IsOverlapped(entry, item))
-                            return true;
+                            return false;
                     }
                 }
             }
-            return false;
+            return true;
         }
 
         private bool IsOverlapped(WordEntry bigWord, WordEntry smallWord) {
@@ -86,7 +86,7 @@ namespace AlphabetSoup.Core {
             if (!overlapp && bigWord.Direction.MovesVertical()) {
                 overlapp = small.Y >= big.Y && small.Y + smallWord.Name.Length <= big.Y + bigWord.Name.Length;
             }
-            return !overlapp;
+            return overlapp;
         }
 
     }

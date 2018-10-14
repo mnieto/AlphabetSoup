@@ -58,8 +58,10 @@ namespace AlphabetSoup.Core.Test {
             Soup soup = generator.Init().Create();
 
             IRule rule = new NotOverlapped();
+
+            //Test that all entries are overlapped
             foreach (WordEntry entry in soup.UsedWords.Values) {
-                string testWord = entry.Name.Substring(0, 3);
+                string testWord = entry.Name.Substring(0, Math.Min(entry.Name.Length, 3));
                 Assert.False(rule.Check(soup, new WordEntry { X = entry.X, Y = entry.Y, Direction = entry.Direction, Name = testWord }));
             }
 
