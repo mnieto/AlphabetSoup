@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5E330D7F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlphabetSoup.Core.Test", "Tests\AlphabetSoup.Core.Test\AlphabetSoup.Core.Test.csproj", "{0969F51E-C4E0-47D4-8796-AF14F28E3DCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlphabetSoup", "AlphabetSoup.Console\AlphabetSoup.csproj", "{70B97860-BFC0-4A27-8B65-3A296FFCF8F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{0969F51E-C4E0-47D4-8796-AF14F28E3DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0969F51E-C4E0-47D4-8796-AF14F28E3DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0969F51E-C4E0-47D4-8796-AF14F28E3DCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70B97860-BFC0-4A27-8B65-3A296FFCF8F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70B97860-BFC0-4A27-8B65-3A296FFCF8F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70B97860-BFC0-4A27-8B65-3A296FFCF8F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70B97860-BFC0-4A27-8B65-3A296FFCF8F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
