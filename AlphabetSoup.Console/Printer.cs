@@ -1,6 +1,7 @@
 ﻿using AlphabetSoup.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AlphabetSoup {
@@ -26,6 +27,11 @@ namespace AlphabetSoup {
         private PrintOptions Options { get; set; }
 
         /// <summary>
+        /// Default constructor. Creates de printer object with default <see cref="PrintOptions"/> 
+        /// </summary>
+        public Printer() : this(new PrintOptions()) { }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="options">What to print</param>
@@ -34,17 +40,17 @@ namespace AlphabetSoup {
         }
 
         public void Print(Soup soup) {
-            if (Options == PrintOptions.None) {
-                return;
-            }
             if (soup == null) {
                 throw new InvalidOperationException($"{nameof(soup)} can't be null");
             }
 
-            if ((Options & PrintOptions.AlphabetSoup) == PrintOptions.AlphabetSoup) {
+            if (Options.PrintAlphabetSoup) {
                 PrintSoup(soup);
             }
-
+            if (Options.PrintWords) {
+                Console.WriteLine();
+                PrintWords(soup.UsedWords.Keys);
+            }
         }
 
         protected void PrintSoup(Soup soup) {
@@ -59,6 +65,26 @@ namespace AlphabetSoup {
                 }
             }
             Console.WriteLine(LastLine(width));
+        }
+
+        protected void PrintWords(IEnumerable<string> words) {
+            int colWidth = words.Max(x => x.Length) + 1;
+            int columns = Options.WordColumns;
+            if (columns == 0) {
+                columns = Console.WindowWidth / colWidth;
+            }
+            var list = words.OrderBy(x => x).ToList();
+            int i = 0;
+            while (i < list.Count) {
+                int c = 1;
+                StringBuilder sb = new StringBuilder();
+                while (i < list.Count && c <= columns) {
+                    sb.Append(list[i].PadRight(colWidth));
+                    c++;
+                    i++;
+                }
+                Console.WriteLine(sb.ToString());
+            }
         }
 
         protected string DataLine(char[] row) {

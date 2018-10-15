@@ -11,7 +11,7 @@ namespace AlphabetSoup {
                 NumWords = 6
             });
 
-            Printer printer = new Printer(PrintOptions.Normal);
+            Printer printer = new Printer();
             printer.Print(soup);
 
             Console.WriteLine();

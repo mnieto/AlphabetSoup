@@ -5,26 +5,24 @@ using System.Text;
 namespace AlphabetSoup.Core {
 
     /// <summary>
-    /// Select what to print
+    /// Select what and how to print the alphabet soup
     /// </summary>
-    public enum PrintOptions {
-
-        ///<summary>No print</summary>
-        None = 0x0,
+    public class PrintOptions {
 
         ///<summary>Prints the rectangle with the alphabet soup</summary>
-        AlphabetSoup = 0x1,
+        public bool PrintAlphabetSoup { get; set; } = true;
 
         ///<summary>Prints the words list</summary>
-        Words = 0x2,
-
-        ///<summary>Prints the soup and the words list</summary>
-        Normal = AlphabetSoup | Words,
+        public bool PrintWords { get; set; } = true;
 
         ///<summary>Remarks the solution inside the alphabet soup</summary>
-        Solution = 0x4,
+        public bool PrintSolution { get; set; } = false;
 
-        ///<summary>Prints the soup, the words list and remarks the solution</summary>
-        All = AlphabetSoup | Words | Solution
+        /// <summary>
+        /// Gets or set the number of columns used to output the list of used words. 
+        /// Default is 0. In that case it attemps to use as many columns as possible
+        /// Value of 1 indicates one word per line
+        /// </summary>
+        public int WordColumns { get; set; } = 0;
     }
 }
