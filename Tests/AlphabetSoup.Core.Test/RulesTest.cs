@@ -28,6 +28,7 @@ namespace AlphabetSoup.Core.Test {
         [InlineData(6, 1, Directions.E)]
         [InlineData(3, 9, Directions.W)]
         [InlineData(8, 8, Directions.NE)]
+        [InlineData(8, 6, Directions.N)]
         public void DontHaveSpaceToPutNewWord(int x, int y, Directions direction) {
             Soup soup = InitSoup();
             WordEntry entry = new WordEntry {
@@ -54,7 +55,7 @@ namespace AlphabetSoup.Core.Test {
 
         [Fact]
         public void IsOverlappedRule() {
-            SoupGenerator generator = TestDataGenerator.InitGenerator(allowedDirections: Directions.E | Directions.N, rules: new List<IRule> { new NotUsed() });
+            SoupGenerator generator = TestDataGenerator.InitGenerator(allowedDirections: Directions.E | Directions.N);
             Soup soup = generator.Init().Create();
 
             IRule rule = new NotOverlapped();

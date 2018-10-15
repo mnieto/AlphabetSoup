@@ -116,7 +116,12 @@ namespace AlphabetSoup.Core {
             for (int i = 0; i < wordEntry.Name.Length; i++) {
                 char c = wordEntry.Name[i];
                 Point pt = wordEntry.Coordinate(i);
-                Soup.Matrix[pt.X, pt.Y] = c;
+                try {
+                    Soup.Matrix[pt.X, pt.Y] = c;
+                } catch (Exception ex) {
+                    System.Diagnostics.Debug.Print($"{ex.Message} at ({pt.X}, {pt.Y}) with entry: {wordEntry}");
+                    throw;
+                }
             }
             Soup.UsedWords.Add(wordEntry.Name, wordEntry);
         }

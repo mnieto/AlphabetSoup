@@ -48,6 +48,10 @@ namespace AlphabetSoup.Core {
             return new Point(X, Y);
         }
 
+        public override string ToString() {
+            return $"{Name} at ({X}, {Y}) with {Direction}";
+        }
+
         /// <summary>
         /// Gets the origin coordinate of the word
         /// </summary>
