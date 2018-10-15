@@ -68,6 +68,13 @@ namespace AlphabetSoup.Core.Test {
 
         }
 
+        [Theory]
+        [MemberData(nameof(TestDataGenerator.InLengthRangeWords), 4, 6, MemberType = typeof(TestDataGenerator))]
+        public void MatchLengthRule(bool expected, string word) {
+            IRule rule = new MatchLengthRange(4, 6);
+            Assert.Equal(expected, rule.Check(null, new WordEntry { Name = word }));
+        }
+
         private Soup InitSoup() {
             Soup soup = new Soup() {
                 Matrix = new char[10, 10]

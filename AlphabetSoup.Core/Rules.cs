@@ -102,4 +102,21 @@ namespace AlphabetSoup.Core {
         }
     }
 
+    /// <summary>
+    /// Check the word length is between <see cref="Options.MinLength"/> and <see cref="Options.MaxLength"/>
+    /// </summary>
+    public class MatchLengthRange : IRule {
+        public string Name => "The word length is between options min length and max length";
+        private int _min;
+        private int _max;
+        public MatchLengthRange(int min, int max) {
+            _min = min;
+            _max = max;
+        }
+
+        public bool Check(Soup soup, WordEntry entry) {
+            return entry.Name.Length >= _min && entry.Name.Length <= _max;
+        }
+    }
+
 }

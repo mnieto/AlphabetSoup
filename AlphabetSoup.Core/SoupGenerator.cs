@@ -27,7 +27,7 @@ namespace AlphabetSoup.Core {
         /// </summary>
         internal Directions[] AllowedDirections { get; private set; }
 
-        internal List<IRule> Rules { get; private set; }
+        internal IEnumerable<IRule> Rules { get; private set; }
 
         /// <summary>
         /// <see cref="Options"/> used to configure this generator. 
@@ -149,12 +149,13 @@ namespace AlphabetSoup.Core {
             return configuration.ReadLanguageData(Options.CultureCode, Options.Words == null || Options.Words.Count() == 0);
         }
 
-        protected List<IRule> StandardRules() {
-            return new List<IRule> {
-                new NotUsed(),
-                new HaveSpace(),
-                new NotOverlapped()
-            };
+        protected IEnumerable<IRule> StandardRules() {
+            yield return new NotUsed();
+            yield return new HaveSpace();
+            yield return new NotOverlapped();
+            if (Options.MinLength != 0 || Options.MaxLength != 0) {
+                yield return new MatchLengthRange(Options.MinLength, Options.MaxLength == 0 ? int.MaxValue : Options.MaxLength);
+            }
         }
 
 
