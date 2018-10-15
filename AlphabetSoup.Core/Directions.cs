@@ -8,16 +8,16 @@ namespace AlphabetSoup.Core
     public enum Directions
     {
         /// <summary>From top to down </summary>
-        N = -16,
+        N = 1,
 
         /// <summary>Diagonal from top to down-right</summary>
-        NE = -32,
+        NE = 2,
 
         /// <summary>From left to right</summary>
-        E = -64,
+        E = 4,
         
         /// <summary>Diagonal from bottom to top-right</summary>
-        SE = -128,
+        SE = 8,
 
         /// <summary>From bottom to top (reverse)</summary>
         S = 16,
@@ -40,17 +40,16 @@ namespace AlphabetSoup.Core
         public static bool SameDirection(this Directions thisDirection, Directions other) {
             if (thisDirection == other)
                 return true;
-            else if (Math.Abs((int)thisDirection) == Math.Abs((int)other))
-                return true;
-            else
-                return false;
+            int max = Math.Max((int)thisDirection, (int)other);
+            int min = Math.Min((int)thisDirection, (int)other);
+            return (max >> 4 == min);
         }
 
         /// <summary>
         /// Returns <c>true</c> if <paramref name="thisDirection"/> is reverse; <c>false</c> if is straight direction
         /// </summary>
         public static bool IsReverse(this Directions thisDirection) {
-            return ((int)thisDirection) > 0;
+            return ((int)thisDirection) >= 16;
         }
 
         /// <summary>
