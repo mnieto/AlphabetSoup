@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace AlphabetSoup {
+
+    /// <summary>
+    /// Prints out the alphabet soup to Console
+    /// </summary>
     public class Printer {
 
         private const char TopLeft = '┌';
@@ -21,6 +25,10 @@ namespace AlphabetSoup {
 
         private PrintOptions Options { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="options">What to print</param>
         public Printer(PrintOptions options) {
             Options = options;
         }

@@ -30,23 +30,22 @@ namespace AlphabetSoup.Core {
         public string Name { get; set; }
 
         /// <summary>
-        /// 
+        /// Returns the Top-Left coordinate independently if it's straight direction or reverse direction
         /// </summary>
-        /// <returns></returns>
-        public (int X, int Y) AbsoluteOrigin() {
+        public Point AbsoluteOrigin() {
             if (Direction.IsReverse()) {
                 switch (Direction) {
                     case Directions.S:
-                        return (X, Y - Name.Length + 1);
+                        return new Point(X, Y - Name.Length + 1);
                     case Directions.NW:
-                        return (X, Y - Name.Length + 1);
+                        return new Point(X, Y - Name.Length + 1);
                     case Directions.SW:
-                        return (X - Name.Length + 1, Y - Name.Length + 1);
+                        return new Point(X - Name.Length + 1, Y - Name.Length + 1);
                     case Directions.W:
-                        return (X - Name.Length+ 1, Y);
+                        return new Point(X - Name.Length+ 1, Y);
                 }
             }
-            return (X, Y);
+            return new Point(X, Y);
         }
 
         /// <summary>

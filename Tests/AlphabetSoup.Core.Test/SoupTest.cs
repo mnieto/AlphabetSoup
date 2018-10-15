@@ -27,7 +27,7 @@ namespace AlphabetSoup.Core.Test {
                 Direction = direction,
                 Name = "HELLO"
             };
-            Assert.Equal((expectedX, expectedY), entry.AbsoluteOrigin());
+            Assert.Equal(new Point(expectedX, expectedY), entry.AbsoluteOrigin());
         }
 
         [Theory]
@@ -37,6 +37,16 @@ namespace AlphabetSoup.Core.Test {
         [InlineData(Directions.W)]
         public void IsReverseTest(Directions dir) {
             Assert.True(dir.IsReverse());
+        }
+
+        [Fact]
+        public void MatrixDimensions() {
+            Soup soup = new Soup {
+                Matrix = new char[10, 5]
+            };
+
+            Assert.Equal(10, soup.Matrix.GetLength(0)); //The X axis
+            Assert.Equal(5, soup.Matrix.GetLength(1));  //The Y axis
         }
     }
 }

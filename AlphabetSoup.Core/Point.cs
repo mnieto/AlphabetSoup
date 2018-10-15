@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlphabetSoup.Core {
 
-    [DebuggerDisplay("X: {X}, Y: {Y}")]
+    [DebuggerDisplay("({X}, {Y})")]
     public struct Point {
         public int X;
         public int Y;
