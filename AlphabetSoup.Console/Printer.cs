@@ -68,23 +68,8 @@ namespace AlphabetSoup {
         }
 
         protected void PrintWords(IEnumerable<string> words) {
-            int colWidth = words.Max(x => x.Length) + 1;
-            int columns = Options.WordColumns;
-            if (columns == 0) {
-                columns = Console.WindowWidth / colWidth;
-            }
-            var list = words.OrderBy(x => x).ToList();
-            int i = 0;
-            while (i < list.Count) {
-                int c = 1;
-                StringBuilder sb = new StringBuilder();
-                while (i < list.Count && c <= columns) {
-                    sb.Append(list[i].PadRight(colWidth));
-                    c++;
-                    i++;
-                }
-                Console.WriteLine(sb.ToString());
-            }
+            var wordPrinter = new PrintMultiColumnWords(words, Options.WordColumns);
+            wordPrinter.Print();
         }
 
         protected string DataLine(char[] row) {

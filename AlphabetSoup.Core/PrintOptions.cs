@@ -20,9 +20,9 @@ namespace AlphabetSoup.Core {
 
         /// <summary>
         /// Gets or set the number of columns used to output the list of used words. 
-        /// Default is 0. In that case it attemps to use as many columns as possible
+        /// Default is <c>null</c>. In that case it attempts to use as many columns as possible
         /// Value of 1 indicates one word per line
         /// </summary>
-        public int WordColumns { get; set; } = 0;
+        public int? WordColumns { get; set; } = null;
     }
 }
