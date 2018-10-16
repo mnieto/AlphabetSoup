@@ -15,7 +15,7 @@ namespace AlphabetSoup {
             });
 
             
-            Printer printer = IoC.Services.GetService<Printer>();
+            IPrinter printer = IoC.Services.GetService<IPrinter>();
             printer.Print(soup);
 
             Console.WriteLine();

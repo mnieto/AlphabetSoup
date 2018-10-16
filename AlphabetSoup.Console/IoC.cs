@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AlphabetSoup.Core;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +11,7 @@ namespace AlphabetSoup {
         public static void ConfigureServices() {
             IServiceCollection services = new ServiceCollection();
 
-            services.AddTransient<Printer>();
+            services.AddTransient<IPrinter, Printer>();
             services.AddSingleton<IConsoleWrapper, ConsoleWrapper>();
 
             Services = services.BuildServiceProvider();

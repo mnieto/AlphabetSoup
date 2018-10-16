@@ -6,10 +6,11 @@ using System.Text;
 
 namespace AlphabetSoup {
 
+
     /// <summary>
     /// Prints out the alphabet soup to Console
     /// </summary>
-    public class Printer {
+    public class Printer : IPrinter {
 
         private const char TopLeft = '┌';
         private const char Horizontal = '─';
@@ -24,7 +25,8 @@ namespace AlphabetSoup {
         private const char BottomRight = '┘';
 
         private IConsoleWrapper Console { get; set; }
-        private PrintOptions Options { get; set; }
+
+        public PrintOptions Options { get; set; }
 
         /// <summary>
         /// Default constructor. Creates de printer object with default <see cref="PrintOptions"/> 
@@ -56,7 +58,7 @@ namespace AlphabetSoup {
             }
         }
 
-        protected void PrintSoup(Soup soup) {
+        public void PrintSoup(Soup soup) {
             int width = soup.Matrix.GetLength(0);
             int height = soup.Matrix.GetLength(1);
 
@@ -70,7 +72,7 @@ namespace AlphabetSoup {
             Console.WriteLine(LastLine(width));
         }
 
-        protected void PrintWords(IEnumerable<string> words) {
+        public void PrintWords(IEnumerable<string> words) {
             var wordPrinter = new PrintMultiColumnWords(Console, words, Options.WordColumns);
             wordPrinter.Print();
         }
