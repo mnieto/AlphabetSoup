@@ -6,6 +6,7 @@ using System.Text;
 namespace AlphabetSoup {
     public class PrintMultiColumnWords {
 
+        private IConsoleWrapper Console { get; set; }
         private IEnumerable<string> _words;
         private int _colWidth = 0;
         private int? _columns;
@@ -15,7 +16,9 @@ namespace AlphabetSoup {
         /// </summary>
         /// <param name="words">List of words</param>
         /// <param name="columns">Number of preferred columns. If <c>null</c> it will compute the <see cref="BestColumnsFit(int)"/></param>
-        public PrintMultiColumnWords(IEnumerable<string> words, int? columns) {
+        /// <param name="console"><see cref="System.Console"/> compatible class to output text</param>
+        public PrintMultiColumnWords(IConsoleWrapper console, IEnumerable<string> words, int? columns) {
+            Console = console;
             _words = words;
             _colWidth = words.Max(x => x.Length) + 1;
             _columns = columns;

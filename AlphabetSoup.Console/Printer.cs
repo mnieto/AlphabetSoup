@@ -23,19 +23,22 @@ namespace AlphabetSoup {
         private const char BottomMiddle = '┴';
         private const char BottomRight = '┘';
 
-
+        private IConsoleWrapper Console { get; set; }
         private PrintOptions Options { get; set; }
 
         /// <summary>
         /// Default constructor. Creates de printer object with default <see cref="PrintOptions"/> 
         /// </summary>
-        public Printer() : this(new PrintOptions()) { }
+        /// <param name="console"><see cref="System.Console"/> compatible class to output text</param>
+        public Printer(IConsoleWrapper console) : this(console, new PrintOptions()) { }
 
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="console"><see cref="System.Console"/> compatible class to output text</param>
         /// <param name="options">What to print</param>
-        public Printer(PrintOptions options) {
+        public Printer(IConsoleWrapper console, PrintOptions options) {
+            Console = console;
             Options = options;
         }
 
@@ -68,7 +71,7 @@ namespace AlphabetSoup {
         }
 
         protected void PrintWords(IEnumerable<string> words) {
-            var wordPrinter = new PrintMultiColumnWords(words, Options.WordColumns);
+            var wordPrinter = new PrintMultiColumnWords(Console, words, Options.WordColumns);
             wordPrinter.Print();
         }
 
