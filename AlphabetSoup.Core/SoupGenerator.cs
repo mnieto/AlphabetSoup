@@ -89,15 +89,7 @@ namespace AlphabetSoup.Core {
                 WordEntry wordEntry = null;
                 do {
                     failed = false;
-                    int index = random.Next(Words.Count - 1);
-                    string word = Words[index];
-
-                    wordEntry = new WordEntry {
-                        X = random.Next(Options.Size - 1),
-                        Y = random.Next(Options.Size - 1),
-                        Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
-                        Name = word
-                    };
+                    wordEntry = NextEntry();
 
                     foreach (IRule rule in Rules) {
                         if (!rule.Check(Soup, wordEntry)) {
@@ -110,6 +102,21 @@ namespace AlphabetSoup.Core {
                 AddWord(wordEntry);
             }
             return Soup;
+        }
+
+        /// <summary>
+        /// Generates an new <see cref="WordEntry"/> with random name, position, and direction
+        /// </summary>
+        internal WordEntry NextEntry() {
+            int index = random.Next(Words.Count - 1);
+            string word = Words[index];
+
+            return new WordEntry {
+                X = random.Next(Options.Size - 1),
+                Y = random.Next(Options.Size - 1),
+                Direction = AllowedDirections[random.Next(AllowedDirections.Length - 1)],
+                Name = word
+            };
         }
 
         private void AddWord(WordEntry wordEntry) {
