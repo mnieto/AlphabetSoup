@@ -70,6 +70,7 @@ namespace AlphabetSoup.Core {
         internal SoupGenerator Init() {
             Soup = new Soup();
             Soup.Matrix = new char[Options.Size, Options.Size];
+            Soup.ShadowMatrix = new bool[Options.Size, Options.Size];
             for (int x = 0; x < Options.Size ; x++) {
                 for (int y = 0; y < Options.Size; y++) {
                     int i = random.Next(Letters.Length - 1);
@@ -125,6 +126,7 @@ namespace AlphabetSoup.Core {
                 Point pt = wordEntry.Coordinate(i);
                 try {
                     Soup.Matrix[pt.X, pt.Y] = c;
+                    Soup.ShadowMatrix[pt.X, pt.Y] = true;
                 } catch (Exception ex) {
                     System.Diagnostics.Debug.Print($"{ex.Message} at ({pt.X}, {pt.Y}) with entry: {wordEntry}");
                     throw;

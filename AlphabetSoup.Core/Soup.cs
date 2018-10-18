@@ -15,6 +15,11 @@ namespace AlphabetSoup.Core {
         public char[,] Matrix { get; set; }
 
         /// <summary>
+        /// Controls what cells in <see cref="Matrix"/> are used
+        /// </summary>
+        public bool[,] ShadowMatrix { get; set; }
+
+        /// <summary>
         /// The list of used words to build the alphabet soup
         /// </summary>
         public Dictionary<string, WordEntry> UsedWords { get; set; }

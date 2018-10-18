@@ -64,7 +64,7 @@ namespace AlphabetSoup {
 
             Console.WriteLine(FirstLine(width));
             for (int i = 0; i < height; i++) {
-                Console.WriteLine(DataLine(soup.Matrix.GetRow(i)));
+                WriteDataLine(soup, i);
                 if (i < height - 1) {
                     Console.WriteLine(MiddleLine(width));
                 }
@@ -77,17 +77,21 @@ namespace AlphabetSoup {
             wordPrinter.Print();
         }
 
-        protected string DataLine(char[] row) {
-            int width = row.Length;
+        protected void WriteDataLine(Soup soup, int row) {
+            int width = soup.Matrix.GetLength(0);
             StringBuilder sb = new StringBuilder();
-            sb.Append(Vertical);
+            Console.Write(Vertical);
             for (int i = 0; i < width; i++) {
-                //TODO: Write in other color if PrintOptions.Solution is set
-                sb.Append(row[i]);
-                sb.Append(Vertical);
+                if (Options.PrintSolution && soup.ShadowMatrix[row, i]) {
+                    Console.WriteColor(ConsoleColor.Red, soup.Matrix[row, i]);
+                } else {
+                    Console.Write(soup.Matrix[row, i]);
+                }
+                Console.Write(Vertical);
             }
-            return sb.ToString();
+            Console.WriteLine();
         }
+
         protected string FirstLine(int width) {
             StringBuilder sb = new StringBuilder();
             sb.Append(TopLeft);

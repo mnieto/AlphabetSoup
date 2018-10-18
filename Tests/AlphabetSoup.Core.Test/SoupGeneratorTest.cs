@@ -26,6 +26,7 @@ namespace AlphabetSoup.Core.Test {
             Assert.True(char.IsLetter(c));
             Assert.True(char.IsUpper(c));
             Assert.True(sut.Letters.ToList().IndexOf(c) != -1);
+            Assert.False(sut.Soup.ShadowMatrix[0, 0]);
         }
 
         [Fact]

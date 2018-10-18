@@ -16,6 +16,11 @@ namespace AlphabetSoup {
 
             
             IPrinter printer = IoC.Services.GetService<IPrinter>();
+            printer.Options = new PrintOptions {
+                PrintAlphabetSoup = true,
+                PrintWords = true,
+                PrintSolution = true
+            };
             printer.Print(soup);
 
             Console.WriteLine();
