@@ -11,46 +11,9 @@ namespace AlphabetSoup.Core {
         public string Name => "Check if words will be truncated because there is not enough space from origin coordinate to the end of the soup";
 
         public bool Check(Soup soup, WordEntry entry) {
-            bool haveHorizontalSpace = false;
-            bool haveVerticalSpace = false;
-            int wordLength = entry.Name.Length;
-
-            //X
-            switch (entry.Direction) {
-                case Directions.N:
-                case Directions.S:
-                    haveHorizontalSpace = true;
-                    break;
-                case Directions.E:
-                case Directions.NE:
-                case Directions.SE:
-                    haveHorizontalSpace = soup.Matrix.GetLength(0) - wordLength >= entry.X;
-                    break;
-                case Directions.W:
-                case Directions.NW:
-                case Directions.SW:
-                    haveHorizontalSpace = entry.X - wordLength + 1 >= 0;
-                    break;
-            }
-
-            //Y
-            switch (entry.Direction) {
-                case Directions.E:
-                case Directions.W:
-                    haveVerticalSpace = true;
-                    break;
-                case Directions.N:
-                case Directions.NE:
-                case Directions.NW:
-                    haveVerticalSpace = soup.Matrix.GetLength(1) - wordLength >= entry.Y;
-                    break;
-                case Directions.S:
-                case Directions.SE:
-                case Directions.SW:
-                    haveVerticalSpace = entry.Y - wordLength >= 0;
-                    break;
-            }
-
+            Point pt = entry.EndingCoordinate();
+            bool haveHorizontalSpace = pt.X >= 0 && pt.X < soup.Matrix.GetLength(0);
+            bool haveVerticalSpace = pt.Y >= 0 && pt.Y < soup.Matrix.GetLength(1);
             return haveHorizontalSpace && haveVerticalSpace;
         }
     }

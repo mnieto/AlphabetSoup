@@ -75,6 +75,9 @@ namespace AlphabetSoup.Core.Test {
             Assert.Equal(expected, rule.Check(null, new WordEntry { Name = word }));
         }
 
+        /// <summary>
+        /// Initialize a small 10x10 test soup with all its cells set to A
+        /// </summary>
         private Soup InitSoup() {
             Soup soup = new Soup() {
                 Matrix = new char[10, 10]

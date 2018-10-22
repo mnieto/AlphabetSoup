@@ -30,22 +30,10 @@ namespace AlphabetSoup.Core {
         public string Name { get; set; }
 
         /// <summary>
-        /// Returns the Top-Left coordinate independently if it's straight direction or reverse direction
+        /// Returns the coordinate of the first letter of the word, independently if it's straight direction or reverse direction
         /// </summary>
         public Point AbsoluteOrigin() {
-            if (Direction.IsReverse()) {
-                switch (Direction) {
-                    case Directions.S:
-                        return new Point(X, Y - Name.Length + 1);
-                    case Directions.NW:
-                        return new Point(X, Y - Name.Length + 1);
-                    case Directions.SW:
-                        return new Point(X - Name.Length + 1, Y - Name.Length + 1);
-                    case Directions.W:
-                        return new Point(X - Name.Length+ 1, Y);
-                }
-            }
-            return new Point(X, Y);
+            return Direction.IsReverse() ? EndingCoordinate() : new Point(X, Y);
         }
 
         public override string ToString() {
@@ -71,9 +59,9 @@ namespace AlphabetSoup.Core {
                 case Directions.NE:
                     return new Point(X + position, Y + position);
                 case Directions.NW:
-                    return new Point(X + position, Y - position);
+                    return new Point(X - position, Y + position);
                 case Directions.S:
-                    return new Point(X - position, Y);
+                    return new Point(X, Y - position);
                 case Directions.SE:
                     return new Point(X + position, Y - position);
                 case Directions.SW:
@@ -83,6 +71,15 @@ namespace AlphabetSoup.Core {
                 default:
                     throw new InvalidOperationException("Direction not supported");
             }
+        }
+
+
+        /// <summary>
+        /// Returns de end coordinate, that is, the coordinate of the last letter
+        /// </summary>
+        /// <returns></returns>
+        public Point EndingCoordinate() {
+            return Coordinate(Name.Length - 1);
         }
     }
 }
