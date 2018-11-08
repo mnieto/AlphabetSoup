@@ -15,6 +15,17 @@ namespace AlphabetSoup.Core {
             Y = y;
         }
 
+        /// <summary>
+        /// Returns the difference (delta) between this point and <paramref name="other"/>
+        /// </summary>
+        /// <param name="other">Point to measure the delta</param>
+        public Point Delta(Point other) {
+            return new Point {
+                X = X - other.X,
+                Y = Y - other.Y
+            };
+        }
+
         public bool Equals(Point other) {
             if (ReferenceEquals(other, null)) return false;
             return X == other.X && Y == other.Y;

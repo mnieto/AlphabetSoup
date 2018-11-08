@@ -73,6 +73,30 @@ namespace AlphabetSoup.Core {
             }
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the <see cref="WordEntry"/> intersects in any point with <paramref name="other"/>
+        /// </summary>
+        /// <param name="other">The <see cref="WordEntry"/> to test</param>
+        public bool IntersectWith(WordEntry other) {
+            for (int i = 0; i < Name.Length; i++) {
+                for (int j = 0; j < other.Name.Length; j++) {
+                    if (Coordinate(i) == other.Coordinate(j))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Translates the origin
+        /// </summary>
+        /// <param name="delta">Coordinates increment</param>
+        /// <returns>The new <see cref="Origin"/></returns>
+        public Point Translate(Point delta) {
+            X += delta.X;
+            Y += delta.Y;
+            return Origin;
+        }
 
         /// <summary>
         /// Returns de end coordinate, that is, the coordinate of the last letter

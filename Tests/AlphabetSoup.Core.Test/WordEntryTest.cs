@@ -54,7 +54,33 @@ namespace AlphabetSoup.Core.Test {
             Assert.Equal("HELLO at (1, 1) with E", sut.ToString());
         }
 
+        [Fact]
+        public void IntersectTest() {
+            var w1 = new WordEntry {
+                X = 1,
+                Y = 2,
+                Name = "HELLO",
+                Direction = Directions.E
+            };
+            var w2 = new WordEntry {
+                X = 3,
+                Y = 1,
+                Name = "HOUSE",
+                Direction = Directions.N
+            };
+            Assert.True(w1.IntersectWith(w2));
+        }
 
+        [Fact]
+        public void TranslateTest() {
+            var w1 = new WordEntry {
+                X = 1,
+                Y = 2,
+                Name = "HELLO",
+                Direction = Directions.E
+            };
+            Assert.Equal(new Point(2, 3), w1.Translate(new Point(1, 1)));
+        }
 
             
     }
