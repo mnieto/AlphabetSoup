@@ -5,6 +5,11 @@ using Xunit;
 
 namespace AlphabetSoup.Core.Test {
     public class IntersectionTest {
+        
+        private Soup soup;
+        public IntersectionTest() {
+            soup = TestDataGenerator.InitGenerator().Init().Soup;
+        }
 
         [Fact]
         public void IntersectionInfoTest() {
@@ -20,7 +25,7 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate);
+            var sut = new IntersectionManager(existing, candidate, soup);
 
             Assert.True(sut.Intersects);
             Assert.False(sut.Overlaps);
@@ -30,21 +35,23 @@ namespace AlphabetSoup.Core.Test {
         [Fact]
         public void HasCommonLettersTest() {
             WordEntry existing = new WordEntry {
-                Name = "HOUSE",
+                Name = "STRANGER",
                 X = 3,
                 Y = 2,
                 Direction = Directions.N
             };
             WordEntry candidate = new WordEntry {
-                Name = "THING",
+                Name = "THINGS",
                 X = 2,
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate);
-            Assert.True(sut.HasCommonLetters());
-            Assert.Equal("H", existing.Name.Substring(sut.ExistingRange.Init, sut.ExistingRange.Length));
-            Assert.Equal("H", candidate.Name.Substring(sut.CandidateRange.Init, sut.CandidateRange.Length));
+            var sut = new IntersectionManager(existing, candidate, soup);
+            Assert.True(sut.GetCommonLetters());
+            Assert.Equal(4, sut.CommonLetters.Count);
+            Assert.Equal('S', sut.CommonLetters[0].Letter);
+            Assert.Equal(0, sut.CommonLetters[0].ExistingPos);
+            Assert.Equal(5, sut.CommonLetters[0].CandidatePos);
         }
 
 
@@ -62,8 +69,8 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate);
-            Assert.False(sut.HasCommonLetters());
+            var sut = new IntersectionManager(existing, candidate, soup);
+            Assert.False(sut.GetCommonLetters());
         }
 
         [Fact]
@@ -80,7 +87,7 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate);
+            var sut = new IntersectionManager(existing, candidate, soup);
             sut.RepositionEntry();
             Assert.Equal(new Point(3, 2), sut.Candidate.Origin);
         }
