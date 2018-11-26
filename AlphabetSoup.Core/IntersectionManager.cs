@@ -86,8 +86,19 @@ namespace AlphabetSoup.Core
         /// </summary>
         public bool GetCommonLetters() {
             if (Existing.Direction.SameDirection(Candidate.Direction)) {
-                //TODO: Comprobar desde el final de una con el principio de la otra y viceversa. Tener en cuenta si la dirección es normal o reverse
-                throw new NotImplementedException();
+                var result = FindCommonLetters(Existing, Candidate);
+                if (result.hasCommon) {
+                    ExistingRange = result.left;
+                    CandidateRange = result.right;
+                    return true;
+                }
+                result = FindCommonLetters(Candidate, Existing);
+                if (result.hasCommon) {
+                    ExistingRange = result.right;
+                    CandidateRange = result.left;
+                    return true;
+                }
+                return false;
             } else {
                 for (int i = 0; i < Existing.Name.Length; i++) {
                     int pos = Candidate.Name.IndexOf(Existing.Name[i]);
@@ -97,11 +108,6 @@ namespace AlphabetSoup.Core
                             ExistingPos = i,
                             CandidatePos = pos
                         });
-                        //ExistingRange.Init = i;
-                        //ExistingRange.Length = 1;
-                        //CandidateRange.Init = pos;
-                        //CandidateRange.Length = 1;
-                        //return true;
                     }
                 }
                 return CommonLetters.Count > 0;
@@ -148,6 +154,29 @@ namespace AlphabetSoup.Core
             var size = new Point(Soup.Matrix.GetUpperBound(0), Soup.Matrix.GetUpperBound(1));
             return origin.X >= 0 && origin.X < size.X &&
                    origin.Y >= 0 && origin.Y < size.Y; 
+        }
+
+        private (Range left, Range right, bool hasCommon) FindCommonLetters(WordEntry a, WordEntry b) {
+            int minLength = Math.Min(a.Name.Length, b.Name.Length);
+            string nameA = a.Direction.IsReverse() ? Reverse(a.Name) : a.Name;
+            string nameB = b.Direction.IsReverse() ? Reverse(b.Name) : b.Name;
+            for (int i = 1; i < minLength; i++) {
+                string e = nameA.Substring(nameA.Length - i);
+                string c = nameB.Substring(0, i);
+                if (e == c) {
+                    int leftInit = a.Direction.IsReverse() ? 0 : nameA.Length - i;
+                    int rightInit = b.Direction.IsReverse() ? nameB.Length - i : 0;
+                    return (left: new Range { Init = leftInit, Length = i },
+                            right: new Range { Init = rightInit, Length = i},
+                            hasCommon: true
+                    );
+                }
+            }
+            return (left: null, right: null, hasCommon: false);
+        }
+
+        private string Reverse(string value) {
+            return new string(value.Reverse().ToArray());
         }
 
         /// <summary>
