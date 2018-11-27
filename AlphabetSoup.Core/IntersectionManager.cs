@@ -90,12 +90,21 @@ namespace AlphabetSoup.Core
                 if (result.hasCommon) {
                     ExistingRange = result.left;
                     CandidateRange = result.right;
-                    return true;
+                } else {
+                    result = FindCommonLetters(Candidate, Existing);
+                    if (result.hasCommon) {
+                        ExistingRange = result.right;
+                        CandidateRange = result.left;
+                    }
                 }
-                result = FindCommonLetters(Candidate, Existing);
                 if (result.hasCommon) {
-                    ExistingRange = result.right;
-                    CandidateRange = result.left;
+                    for (int i = ExistingRange.Init; i < ExistingRange.Init + ExistingRange.Length; i++) {
+                        CommonLetters.Add(new CommonLetter {
+                            Letter = Existing.Name[i],
+                            ExistingPos = i,
+                            CandidatePos = CandidateRange.Init + i
+                        });
+                    }
                     return true;
                 }
                 return false;
@@ -124,7 +133,12 @@ namespace AlphabetSoup.Core
             if (!GetCommonLetters())
                 throw new InvalidOperationException("Can't reposition an entry without common letters");
             if (Overlaps) {
-                throw new NotImplementedException();
+                Point target = Existing.Coordinate(ExistingRange.Init);
+                int increment = Candidate.Direction.IsReverse() ? 1 : 0;
+                Point delta = target.Delta(Candidate.Coordinate(CandidateRange.Init + increment));
+                Candidate.Translate(delta);
+                bool insideBoundaries = CheckBoundaries(Candidate.Origin);
+                return insideBoundaries && !IntersectsWithOthers(Soup.UsedWords.Values);
             } else {
                 int i = 0;
                 bool insideBoundaries = false;
