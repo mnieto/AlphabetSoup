@@ -131,7 +131,8 @@ namespace AlphabetSoup.Core
             if (!Intersects)
                 throw new InvalidOperationException("Can't reposition an entry that do not intersects with others");
             if (!GetCommonLetters())
-                throw new InvalidOperationException("Can't reposition an entry without common letters");
+                return false;
+                //throw new InvalidOperationException("Can't reposition an entry without common letters");
             if (Overlaps) {
                 Point target = Existing.Coordinate(ExistingRange.Init);
                 int increment = Candidate.Direction.IsReverse() ? 1 : 0;
@@ -147,6 +148,7 @@ namespace AlphabetSoup.Core
                     Point delta = target.Delta(Candidate.Coordinate(CommonLetters[i].CandidatePos));
                     Candidate.Translate(delta);
                     insideBoundaries = CheckBoundaries(Candidate.Origin);
+                    i++;
                 } while (!insideBoundaries && i < CommonLetters.Count);
                 return insideBoundaries && !IntersectsWithOthers(Soup.UsedWords.Values);
             }

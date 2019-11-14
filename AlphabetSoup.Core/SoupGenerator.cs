@@ -91,13 +91,23 @@ namespace AlphabetSoup.Core {
                 do {
                     failed = false;
                     wordEntry = NextEntry();
-
-                    foreach (IRule rule in Rules) {
-                        if (!rule.Check(Soup, wordEntry)) {
-                            failed = true;
-                            break;
+                    foreach (WordEntry existing in Soup.UsedWords.Values) {
+                        var manager = new IntersectionManager(existing, wordEntry, Soup);
+                        if (manager.Intersects) {
+                            failed = !manager.RepositionEntry();
                         }
+                        if (failed)
+                            break;
                     }
+                    if (!failed) {
+                        foreach (IRule rule in Rules) {
+                            if (!rule.Check(Soup, wordEntry)) {
+                                failed = true;
+                                break;
+                            }
+                        }
+
+                    }                
                 } while (failed);
                 System.Diagnostics.Debug.Assert(wordEntry != null);
                 AddWord(wordEntry);

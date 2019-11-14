@@ -11,7 +11,7 @@ namespace AlphabetSoup {
             Soup soup = Soup.Build(new Core.Options {
                 CultureCode = "es-es",
                 Size = 20,
-                NumWords = 6
+                NumWords = 10
             });
 
             
