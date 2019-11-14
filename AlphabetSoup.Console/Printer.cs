@@ -83,9 +83,9 @@ namespace AlphabetSoup {
             Console.Write(Vertical);
             for (int i = 0; i < width; i++) {
                 if (Options.PrintSolution && soup.ShadowMatrix[row, i]) {
-                    Console.WriteColor(ConsoleColor.Red, soup.Matrix[row, i]);
+                    Console.WriteColor(ConsoleColor.Red, $" {soup.Matrix[row, i]} ");
                 } else {
-                    Console.Write(soup.Matrix[row, i]);
+                    Console.Write($" {soup.Matrix[row, i]} ");
                 }
                 Console.Write(Vertical);
             }
@@ -96,7 +96,7 @@ namespace AlphabetSoup {
             StringBuilder sb = new StringBuilder();
             sb.Append(TopLeft);
             for (int i = 0; i < width; i++) {
-                sb.Append(Horizontal);
+                sb.Append(new string(Horizontal, 3));
                 sb.Append(TopMiddle);
             }
             sb[sb.Length - 1] = TopRight;
@@ -107,7 +107,7 @@ namespace AlphabetSoup {
             StringBuilder sb = new StringBuilder();
             sb.Append(LeftMiddle);
             for (int i = 0; i < width; i++) {
-                sb.Append(Horizontal);
+                sb.Append(new string(Horizontal, 3));
                 sb.Append(Cross);
             }
             sb[sb.Length - 1] = RightMiddle;
@@ -118,7 +118,7 @@ namespace AlphabetSoup {
             StringBuilder sb = new StringBuilder();
             sb.Append(BottomLeft);
             for (int i = 0; i < width; i++) {
-                sb.Append(Horizontal);
+                sb.Append(new string(Horizontal, 3));
                 sb.Append(BottomMiddle);
             }
             sb[sb.Length - 1] = BottomRight;
