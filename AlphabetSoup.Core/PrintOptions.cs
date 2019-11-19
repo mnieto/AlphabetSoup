@@ -15,6 +15,9 @@ namespace AlphabetSoup.Core {
         ///<summary>Prints the words list</summary>
         public bool PrintWords { get; set; } = true;
 
+        ///<summary>Prints row number headers</summary>
+        public bool PrintRowNumbers { get; set; } = false;
+
         ///<summary>Remarks the solution inside the alphabet soup</summary>
         public bool PrintSolution { get; set; } = false;
 

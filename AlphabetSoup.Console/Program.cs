@@ -19,7 +19,8 @@ namespace AlphabetSoup {
             printer.Options = new PrintOptions {
                 PrintAlphabetSoup = true,
                 PrintWords = true,
-                PrintSolution = true
+                PrintSolution = true,
+                PrintRowNumbers = true
             };
             printer.Print(soup);
 

@@ -23,6 +23,7 @@ namespace AlphabetSoup {
         private const char BottomLeft = '└';
         private const char BottomMiddle = '┴';
         private const char BottomRight = '┘';
+        private const int RowNumberWidth = 2;
 
         private IConsoleWrapper Console { get; set; }
 
@@ -62,6 +63,9 @@ namespace AlphabetSoup {
             int width = soup.Matrix.GetLength(0);
             int height = soup.Matrix.GetLength(1);
 
+            if (Options.PrintRowNumbers) {
+                Console.WriteLine(ColumnHeaders(width));
+            }
             Console.WriteLine(FirstLine(width));
             for (int i = 0; i < height; i++) {
                 WriteDataLine(soup, i);
@@ -79,11 +83,13 @@ namespace AlphabetSoup {
 
         protected void WriteDataLine(Soup soup, int row) {
             int width = soup.Matrix.GetLength(0);
-            StringBuilder sb = new StringBuilder();
+            if (Options.PrintRowNumbers) {
+                Console.Write(RowLabel(row));
+            }
             Console.Write(Vertical);
             for (int i = 0; i < width; i++) {
                 if (Options.PrintSolution && soup.ShadowMatrix[row, i]) {
-                    Console.WriteColor(ConsoleColor.Red, $" {soup.Matrix[row, i]} ");
+                    Console.WriteColor(ConsoleColor.Blue, $" {soup.Matrix[row, i]} ");
                 } else {
                     Console.Write($" {soup.Matrix[row, i]} ");
                 }
@@ -92,36 +98,44 @@ namespace AlphabetSoup {
             Console.WriteLine();
         }
 
-        protected string FirstLine(int width) {
+        private string RowLabel(int label) {
+            string asString = label.ToString();
+            if (asString.Length > RowNumberWidth)
+                asString = asString.Substring(asString.Length - RowNumberWidth, RowNumberWidth);
+            return $"{asString,-RowNumberWidth}";
+        }
+
+        protected string ColumnHeaders(int width) {
             StringBuilder sb = new StringBuilder();
-            sb.Append(TopLeft);
+            sb.Append(new string(' ', RowNumberWidth));
             for (int i = 0; i < width; i++) {
-                sb.Append(new string(Horizontal, 3));
-                sb.Append(TopMiddle);
+                sb.Append("  ");
+                sb.Append(RowLabel(i));
             }
-            sb[sb.Length - 1] = TopRight;
             return sb.ToString();
+        }
+
+        protected string FirstLine(int width) {
+            return Line(width, TopLeft, Horizontal, TopMiddle, TopRight);
         }
 
         protected string MiddleLine(int width) {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(LeftMiddle);
-            for (int i = 0; i < width; i++) {
-                sb.Append(new string(Horizontal, 3));
-                sb.Append(Cross);
-            }
-            sb[sb.Length - 1] = RightMiddle;
-            return sb.ToString();
+            return Line(width, LeftMiddle, Horizontal, Cross, RightMiddle);
         }
 
         protected string LastLine(int width) {
+            return Line(width, BottomLeft, Horizontal, BottomMiddle, BottomRight);
+        }
+
+        protected string Line(int width, char left, char midle, char cross, char right) {
             StringBuilder sb = new StringBuilder();
-            sb.Append(BottomLeft);
+            sb.Append(Options.PrintRowNumbers ? new string(' ', RowNumberWidth) : "");
+            sb.Append(left);
             for (int i = 0; i < width; i++) {
-                sb.Append(new string(Horizontal, 3));
-                sb.Append(BottomMiddle);
+                sb.Append(new string(midle, 3));
+                sb.Append(cross);
             }
-            sb[sb.Length - 1] = BottomRight;
+            sb[sb.Length - 1] = right;
             return sb.ToString();
         }
 
