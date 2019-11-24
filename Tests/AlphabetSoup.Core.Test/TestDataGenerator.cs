@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +25,7 @@ namespace AlphabetSoup.Core.Test {
                 Words = words ?? Words,
                 AllowedDirections = allowedDirections,
                 Rules = rules
-            });
+            }, NullLogger<SoupGenerator>.Instance);
         }
     }
 }

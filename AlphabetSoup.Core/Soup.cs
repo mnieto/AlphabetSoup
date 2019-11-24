@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 
 namespace AlphabetSoup.Core {
@@ -34,10 +35,8 @@ namespace AlphabetSoup.Core {
         /// <summary>
         /// Generate a new alphabet soup following the directives set in the <see cref="Options"/>
         /// </summary>
-        /// <param name="options"><see cref="Options"/> settings</param>
-        /// <returns>Initialized <see cref="Soup"/> with random data</returns>
-        public static Soup Build(Options options) {
-            var generator = new SoupGenerator(options);
+        public static Soup Build(IServiceProvider services) {
+        var generator = services.GetService<ISoupGenerator>();
             return generator.Init()
                 .Create();
         }

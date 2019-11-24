@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AlphabetSoup.Core.Test")]
 
 namespace AlphabetSoup.Core {
+    internal interface ISoupGenerator {
+        Soup Soup { get; }
+        Soup Create();
+        ISoupGenerator Init();
+    }
 
     /// <summary>
     /// Generate a new alphabet soup following the directives set in the <see cref="Options"/>
     /// </summary>
-    internal class SoupGenerator {
+    internal class SoupGenerator : ISoupGenerator {
 
         /// <summary>
         /// List of words used as dictionary to pick words from
@@ -36,6 +43,8 @@ namespace AlphabetSoup.Core {
         /// 
         internal Options Options { get; private set; }
 
+        private ILogger<SoupGenerator> Logger { get; set; }
+
         /// <summary>
         /// Generated aphabet <see cref="Soup"/>
         /// </summary>
@@ -47,8 +56,10 @@ namespace AlphabetSoup.Core {
         /// Constructor
         /// </summary>
         /// <param name="options"><see cref="Options"/> used to configure this generator</param>
-        internal SoupGenerator(Options options) {
-            Options = options;
+        internal SoupGenerator(Options options, ILogger<SoupGenerator> logger) {
+            Options = options ?? throw new ArgumentNullException(nameof(options));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             LanguageData data = LoadWordsFromFile();
             if (Options.Words == null) {
                 Words = data.Lemmata;
@@ -62,16 +73,22 @@ namespace AlphabetSoup.Core {
             else
                 Rules = StandardRules();
         }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="options"><see cref="Options"/> used to configure this generator</param>
+        public SoupGenerator(IOptions<Options> options, ILogger<SoupGenerator> logger): this(options?.Value, logger) { }
 
         /// <summary>
         /// Initialize the Alphabet Soup with random data, with the size and language settings specified in the <see cref="Options"/>
         /// </summary>
         /// <returns>Initialized <see cref="Soup"/> with random data</returns>
-        internal SoupGenerator Init() {
+        public ISoupGenerator Init() {
+            Logger.LogInformation($"Initializing generator for a {Options.Size}x{Options.Size} Soup and {Options.NumWords} words.");
             Soup = new Soup();
             Soup.Matrix = new char[Options.Size, Options.Size];
             Soup.ShadowMatrix = new bool[Options.Size, Options.Size];
-            for (int x = 0; x < Options.Size ; x++) {
+            for (int x = 0; x < Options.Size; x++) {
                 for (int y = 0; y < Options.Size; y++) {
                     int i = random.Next(Letters.Length - 1);
                     Soup.Matrix[x, y] = Letters[i];
@@ -84,7 +101,7 @@ namespace AlphabetSoup.Core {
         /// Fill the alphabet soup with random words in random coordinates and directions
         /// </summary>
         /// <returns>The reated <see cref="Soup"/></returns>
-        internal Soup Create() {
+        public Soup Create() {
             for (int i = 0; i < Options.NumWords; i++) {
                 bool failed = false;
                 WordEntry wordEntry = null;
@@ -107,7 +124,7 @@ namespace AlphabetSoup.Core {
                             }
                         }
 
-                    }                
+                    }
                 } while (failed);
                 System.Diagnostics.Debug.Assert(wordEntry != null);
                 AddWord(wordEntry);
@@ -151,7 +168,7 @@ namespace AlphabetSoup.Core {
         /// <param name="directions">Allowed directions</param>
         protected Directions[] GetDirections(Directions directions) {
             List<Directions> result = new List<Directions>();
-            foreach(Directions dir in Enum.GetValues(typeof(Directions))) {
+            foreach (Directions dir in Enum.GetValues(typeof(Directions))) {
                 if ((directions & dir) == dir) {
                     result.Add(dir);
                 }
