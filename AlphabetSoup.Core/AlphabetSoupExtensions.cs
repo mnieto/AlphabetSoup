@@ -8,6 +8,7 @@ namespace AlphabetSoup.Core {
             services.AddOptions();
             services.Configure<Options>(configuration.GetSection("SoupOptions"));
             services.AddTransient<ISoupGenerator, SoupGenerator>();
+            services.AddTransient<IntersectionManager>();
             
         }
     }

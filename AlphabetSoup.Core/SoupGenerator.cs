@@ -44,7 +44,7 @@ namespace AlphabetSoup.Core {
         internal Options Options { get; private set; }
 
         private ILogger<SoupGenerator> Logger { get; set; }
-
+        private IntersectionManager IntersectionManager { get; set; }
         /// <summary>
         /// Generated aphabet <see cref="Soup"/>
         /// </summary>
@@ -56,8 +56,9 @@ namespace AlphabetSoup.Core {
         /// Constructor
         /// </summary>
         /// <param name="options"><see cref="Options"/> used to configure this generator</param>
-        internal SoupGenerator(Options options, ILogger<SoupGenerator> logger) {
+        internal SoupGenerator(Options options, IntersectionManager intersectionManager, ILogger<SoupGenerator> logger) {
             Options = options ?? throw new ArgumentNullException(nameof(options));
+            IntersectionManager = intersectionManager ?? throw new ArgumentNullException(nameof(intersectionManager));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             LanguageData data = LoadWordsFromFile();
@@ -77,7 +78,7 @@ namespace AlphabetSoup.Core {
         /// Constructor
         /// </summary>
         /// <param name="options"><see cref="Options"/> used to configure this generator</param>
-        public SoupGenerator(IOptions<Options> options, ILogger<SoupGenerator> logger): this(options?.Value, logger) { }
+        public SoupGenerator(IOptions<Options> options, IntersectionManager intersectionManager, ILogger<SoupGenerator> logger): this(options?.Value, intersectionManager, logger) { }
 
         /// <summary>
         /// Initialize the Alphabet Soup with random data, with the size and language settings specified in the <see cref="Options"/>
@@ -94,6 +95,7 @@ namespace AlphabetSoup.Core {
                     Soup.Matrix[x, y] = Letters[i];
                 }
             }
+            IntersectionManager.Soup = Soup;
             return this;
         }
 
@@ -102,16 +104,19 @@ namespace AlphabetSoup.Core {
         /// </summary>
         /// <returns>The reated <see cref="Soup"/></returns>
         public Soup Create() {
+            Logger.LogInformation("==Starting generation==");
+            int total = 0;
             for (int i = 0; i < Options.NumWords; i++) {
                 bool failed = false;
                 WordEntry wordEntry = null;
                 do {
                     failed = false;
                     wordEntry = NextEntry();
+                    Logger.LogInformation($"Trying {wordEntry}");
                     foreach (WordEntry existing in Soup.UsedWords.Values) {
-                        var manager = new IntersectionManager(existing, wordEntry, Soup);
-                        if (manager.Intersects) {
-                            failed = !manager.RepositionEntry();
+                        IntersectionManager.Check(existing, wordEntry);
+                        if (IntersectionManager.Intersects) {
+                            failed = !IntersectionManager.RepositionEntry();
                         }
                         if (failed)
                             break;
@@ -119,16 +124,19 @@ namespace AlphabetSoup.Core {
                     if (!failed) {
                         foreach (IRule rule in Rules) {
                             if (!rule.Check(Soup, wordEntry)) {
+                                Logger.LogWarning($"Word {wordEntry.Name} doesn't match '{rule.Name}' rule.");
                                 failed = true;
                                 break;
                             }
                         }
 
                     }
+                    total++;
                 } while (failed);
                 System.Diagnostics.Debug.Assert(wordEntry != null);
                 AddWord(wordEntry);
             }
+            Logger.LogInformation($"==Finishing generation ({Options.NumWords}/{total})==");
             return Soup;
         }
 

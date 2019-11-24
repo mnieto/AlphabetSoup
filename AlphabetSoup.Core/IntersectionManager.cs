@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace AlphabetSoup.Core
 {
@@ -43,23 +44,34 @@ namespace AlphabetSoup.Core
         /// <summary>
         /// <see cref="Soup"/> where put the new <see cref="WordEntry"/>
         /// </summary>
-        private Soup Soup{ get; set; }
+        public Soup Soup{ get; set; }
 
         /// <summary>
         /// List of common letters and their positions in the existing and candidate words
         /// </summary>
         public List<CommonLetter> CommonLetters { get; private set; } = new List<CommonLetter>();
 
+        private ILogger<IntersectionManager> Logger { get; set; }
+
         /// <summary>
         /// Ctor
         /// </summary>
+        public IntersectionManager(ILogger<IntersectionManager> logger) {
+            Logger = logger;
+        }
+
+        /// <summary>
+        /// Initialize the words to check if have intersection
+        /// </summary>
         /// <param name="existing"><see cref="WordEntry"/> already set in the <see cref="Soup"/></param>
         /// <param name="candidate"><see cref="WordEntry"/> to test if can be set in the <see cref="Soup"/></param>
-        /// <param name="size"><see cref="Soup"/> size to check boundaries while finding the correct position</param>
-        public IntersectionManager(WordEntry existing, WordEntry candidate, Soup soup) {
-            Existing = existing;
-            Candidate = candidate;
-            Soup = soup;
+        public void Check(WordEntry existing, WordEntry candidate) {
+            if (Soup == null) {
+                throw new InvalidOperationException($"{nameof(Soup)} must be initialized");
+            }
+            Existing = existing ?? throw new ArgumentNullException(nameof(existing));
+            Candidate = candidate ?? throw new ArgumentNullException(nameof(candidate));
+            Logger.LogDebug($"Comparing ({existing}) with candidate ({candidate})");
             GetIntersection();
         }
 
@@ -130,14 +142,17 @@ namespace AlphabetSoup.Core
         public bool RepositionEntry() {
             if (!Intersects)
                 throw new InvalidOperationException("Can't reposition an entry that do not intersects with others");
-            if (!GetCommonLetters())
+            if (!GetCommonLetters()) {
+                Logger.LogWarning($"Words {Existing} and {Candidate} intersect but don't have common letters");
                 return false;
-                //throw new InvalidOperationException("Can't reposition an entry without common letters");
+            }
             if (Overlaps) {
+                Logger.LogInformation($"Words {Existing} and {Candidate} overlap {Count} common letters");
                 Point target = Existing.Coordinate(ExistingRange.Init);
                 int increment = Candidate.Direction.IsReverse() ? 1 : 0;
                 Point delta = target.Delta(Candidate.Coordinate(CandidateRange.Init + increment));
                 Candidate.Translate(delta);
+                Logger.LogWarning($"Candidate repositioned: {Candidate}");
                 bool insideBoundaries = CheckBoundaries(Candidate.Origin);
                 return insideBoundaries && !IntersectsWithOthers(Soup.UsedWords.Values);
             } else {
@@ -147,6 +162,7 @@ namespace AlphabetSoup.Core
                     Point target = Existing.Coordinate(CommonLetters[i].ExistingPos);
                     Point delta = target.Delta(Candidate.Coordinate(CommonLetters[i].CandidatePos));
                     Candidate.Translate(delta);
+                    Logger.LogWarning($"Candidate repositioned: {Candidate}");
                     insideBoundaries = CheckBoundaries(Candidate.Origin);
                     i++;
                 } while (!insideBoundaries && i < CommonLetters.Count);

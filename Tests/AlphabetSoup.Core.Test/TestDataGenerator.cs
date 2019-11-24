@@ -19,13 +19,16 @@ namespace AlphabetSoup.Core.Test {
                 throw new ArgumentException($"{nameof(numWords)} must be equal or lower than the number of words in the list");
             }
             return new SoupGenerator(new Options {
-                CultureCode = "es-es",
-                NumWords = numWords,
-                Size = size,
-                Words = words ?? Words,
-                AllowedDirections = allowedDirections,
-                Rules = rules
-            }, NullLogger<SoupGenerator>.Instance);
+                    CultureCode = "es-es",
+                    NumWords = numWords,
+                    Size = size,
+                    Words = words ?? Words,
+                    AllowedDirections = allowedDirections,
+                    Rules = rules
+                }, 
+                new IntersectionManager(NullLogger<IntersectionManager>.Instance), 
+                NullLogger<SoupGenerator>.Instance
+            );
         }
     }
 }
