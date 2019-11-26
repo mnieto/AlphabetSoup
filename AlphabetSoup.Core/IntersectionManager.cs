@@ -71,7 +71,7 @@ namespace AlphabetSoup.Core
             }
             Existing = existing ?? throw new ArgumentNullException(nameof(existing));
             Candidate = candidate ?? throw new ArgumentNullException(nameof(candidate));
-            Logger.LogDebug($"Comparing ({existing}) with candidate ({candidate})");
+            if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogDebug($"Comparing to ({Existing})");
             GetIntersection();
         }
 
@@ -87,9 +87,11 @@ namespace AlphabetSoup.Core
                 for (int j = 0; j < Candidate.Name.Length; j++) {
                     if (Existing.Coordinate(i) == Candidate.Coordinate(j)) {
                         Add(Existing.Coordinate(i));
+                        Logger.LogTrace($"  {Existing.Coordinate(i)}");
                     }
                 }
             }
+            Logger.LogDebug($"Comparing ({Existing}) with candidate ({Candidate}): {Count} intersection(s) found");
             return this;
         }
 
@@ -158,6 +160,7 @@ namespace AlphabetSoup.Core
             } else {
                 int i = 0;
                 bool insideBoundaries = false;
+                Logger.LogInformation($"Candidate intersects at ({this[0]}) with ({Existing})");
                 do {
                     Point target = Existing.Coordinate(CommonLetters[i].ExistingPos);
                     Point delta = target.Delta(Candidate.Coordinate(CommonLetters[i].CandidatePos));
