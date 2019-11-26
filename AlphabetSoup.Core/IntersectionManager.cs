@@ -44,7 +44,7 @@ namespace AlphabetSoup.Core
         /// <summary>
         /// <see cref="Soup"/> where put the new <see cref="WordEntry"/>
         /// </summary>
-        public Soup Soup{ get; set; }
+        public Soup Soup { get; set; }
 
         /// <summary>
         /// List of common letters and their positions in the existing and candidate words
@@ -185,7 +185,7 @@ namespace AlphabetSoup.Core
         private bool CheckBoundaries(Point origin) {
             var size = new Point(Soup.Matrix.GetUpperBound(0), Soup.Matrix.GetUpperBound(1));
             return origin.X >= 0 && origin.X < size.X &&
-                   origin.Y >= 0 && origin.Y < size.Y; 
+                   origin.Y >= 0 && origin.Y < size.Y;
         }
 
         private (Range left, Range right, bool hasCommon) FindCommonLetters(WordEntry a, WordEntry b) {
@@ -199,7 +199,7 @@ namespace AlphabetSoup.Core
                     int leftInit = a.Direction.IsReverse() ? 0 : nameA.Length - i;
                     int rightInit = b.Direction.IsReverse() ? nameB.Length - i : 0;
                     return (left: new Range { Init = leftInit, Length = i },
-                            right: new Range { Init = rightInit, Length = i},
+                            right: new Range { Init = rightInit, Length = i },
                             hasCommon: true
                     );
                 }

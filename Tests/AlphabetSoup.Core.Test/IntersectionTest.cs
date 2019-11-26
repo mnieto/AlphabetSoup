@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -25,7 +26,7 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
 
             Assert.True(sut.Intersects);
             Assert.False(sut.Overlaps);
@@ -46,7 +47,8 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
+            
             Assert.True(sut.GetCommonLetters());
             Assert.Equal(4, sut.CommonLetters.Count);
             Assert.Equal('S', sut.CommonLetters[0].Letter);
@@ -69,7 +71,8 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
+            
             Assert.False(sut.GetCommonLetters());
         }
 
@@ -87,12 +90,12 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
             Assert.True(sut.GetCommonLetters());
             Assert.Equal("LY", existing.Name.Substring(sut.ExistingRange.Init, sut.ExistingRange.Length));
             Assert.Equal("LY", candidate.Name.Substring(sut.CandidateRange.Init, sut.CandidateRange.Length));
 
-            //The found range must mutch, in order and quantity, with CommonLetters
+            //The found range must match, in order and quantity, with CommonLetters
             Assert.Equal(existing.Name.Substring(sut.ExistingRange.Init, sut.ExistingRange.Length).ToCharArray(), sut.CommonLetters.Select(x => x.Letter));
             Assert.Equal(candidate.Name.Substring(sut.CandidateRange.Init, sut.CandidateRange.Length).ToCharArray(), sut.CommonLetters.Select(x => x.Letter));
 
@@ -112,7 +115,7 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.W
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
             Assert.True(sut.GetCommonLetters());
             Assert.Equal("ER", existing.Name.Substring(sut.ExistingRange.Init, sut.ExistingRange.Length));
             Assert.Equal("RE", candidate.Name.Substring(sut.CandidateRange.Init, sut.CandidateRange.Length));
@@ -137,7 +140,7 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
             sut.RepositionEntry();
             Assert.Equal(new Point(3, 2), sut.Candidate.Origin);
         }
@@ -156,13 +159,13 @@ namespace AlphabetSoup.Core.Test {
                 Y = 2,
                 Direction = Directions.E
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
             sut.RepositionEntry();
             Assert.Equal(new Point(5, 2), candidate.Origin);
         }
 
         [Fact]
-        public void TranslateWithOpositeDirectionTest() {
+        public void TranslateWithOppositeDirectionTest() {
             WordEntry existing = new WordEntry {
                 Name = "WINTER",
                 X = 3,
@@ -175,9 +178,16 @@ namespace AlphabetSoup.Core.Test {
                 Y = 4,
                 Direction = Directions.W
             };
-            var sut = new IntersectionManager(existing, candidate, soup);
+            var sut = SetupIntersectionManager(existing, candidate);
             sut.RepositionEntry();
             Assert.Equal(new Point(11, 4), candidate.Origin);
+        }
+
+        private IntersectionManager SetupIntersectionManager(WordEntry existing, WordEntry candidate) {
+            var sut = new IntersectionManager(NullLogger<IntersectionManager>.Instance);
+            sut.Soup = soup;
+            sut.Check(existing, candidate);
+            return sut;
         }
 
     }
