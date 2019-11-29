@@ -87,11 +87,11 @@ namespace AlphabetSoup {
                 Console.Write(RowLabel(row));
             }
             Console.Write(Vertical);
-            for (int i = 0; i < width; i++) {
-                if (Options.PrintSolution && soup.ShadowMatrix[row, i]) {
-                    Console.WriteColor(ConsoleColor.Blue, $" {soup.Matrix[row, i]} ");
+            for (int x = 0; x < width; x++) {
+                if (Options.PrintSolution && soup.ShadowMatrix[x, row]) {
+                    Console.WriteColor(ConsoleColor.Blue, $" {soup.Matrix[x, row]} ");
                 } else {
-                    Console.Write($" {soup.Matrix[row, i]} ");
+                    Console.Write($" {soup.Matrix[x, row]} ");
                 }
                 Console.Write(Vertical);
             }
