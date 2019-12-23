@@ -79,7 +79,14 @@ namespace AlphabetSoup.Core.Test {
                 Name = "HELLO",
                 Direction = Directions.E
             };
-            Assert.Equal(new Point(2, 3), w1.Translate(new Point(1, 1)));
+            Assert.Equal(new Point(2, 3), w1.Translate(new Point(1, 1)).Origin);
+        }
+
+        [Fact]
+        public void Delta() {
+            var sut = new Point(10, 0);
+            var d = sut.Delta(new Point(4, 1));
+            Assert.Equal(new Point(6, -1), d);
         }
 
             

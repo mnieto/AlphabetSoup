@@ -92,10 +92,13 @@ namespace AlphabetSoup.Core {
         /// </summary>
         /// <param name="delta">Coordinates increment</param>
         /// <returns>The new <see cref="Origin"/></returns>
-        public Point Translate(Point delta) {
-            X += delta.X;
-            Y += delta.Y;
-            return Origin;
+        public WordEntry Translate(Point delta) {
+            return new WordEntry {
+                Direction = Direction,
+                X = X + delta.X,
+                Y = Y + delta.Y,
+                Name = Name
+            };
         }
 
         /// <summary>

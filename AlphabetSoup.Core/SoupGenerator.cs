@@ -116,7 +116,8 @@ namespace AlphabetSoup.Core {
                     foreach (WordEntry existing in Soup.UsedWords.Values) {
                         IntersectionManager.Check(existing, wordEntry);
                         if (IntersectionManager.Intersects) {
-                            failed = !IntersectionManager.RepositionEntry();
+                            wordEntry = IntersectionManager.RepositionEntry();
+                            if (wordEntry == null) failed = true;
                         }
                         if (failed)
                             break;

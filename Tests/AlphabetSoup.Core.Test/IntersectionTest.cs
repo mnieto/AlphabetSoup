@@ -127,6 +127,31 @@ namespace AlphabetSoup.Core.Test {
         }
 
         [Fact]
+        public void GetCommonLettersAngleDirection() {
+            WordEntry existing = new WordEntry {
+                Name = "RETOBADO",
+                X = 8,
+                Y = 3,
+                Direction = Directions.NE
+            };
+            WordEntry candidate = new WordEntry {
+                Name = "CAMBIZO",
+                X = 9,
+                Y = 4,
+                Direction = Directions.E
+            };
+            var sut = SetupIntersectionManager(existing, candidate);
+            Assert.True(sut.GetCommonLetters());
+            Assert.Collection(sut.CommonLetters,
+                x => Assert.Equal(new IntersectionManager.CommonLetter { Letter = 'O', ExistingPos = 3, CandidatePos = 6 }, x),
+                x => Assert.Equal(new IntersectionManager.CommonLetter { Letter = 'B', ExistingPos = 4, CandidatePos = 3 }, x),
+                x => Assert.Equal(new IntersectionManager.CommonLetter { Letter = 'A', ExistingPos = 5, CandidatePos = 1 }, x),
+                x => Assert.Equal(new IntersectionManager.CommonLetter { Letter = 'O', ExistingPos = 7, CandidatePos = 6 }, x)
+            );
+
+        }
+
+        [Fact]
         public void TranslateWithIntersectionTest() {
             WordEntry existing = new WordEntry {
                 Name = "STRANGER",
@@ -141,8 +166,8 @@ namespace AlphabetSoup.Core.Test {
                 Direction = Directions.E
             };
             var sut = SetupIntersectionManager(existing, candidate);
-            sut.RepositionEntry();
-            Assert.Equal(new Point(3, 2), sut.Candidate.Origin);
+            candidate = sut.RepositionEntry();
+            Assert.Equal(new Point(3, 2), candidate.Origin);
         }
 
         [Fact]
@@ -160,7 +185,7 @@ namespace AlphabetSoup.Core.Test {
                 Direction = Directions.E
             };
             var sut = SetupIntersectionManager(existing, candidate);
-            sut.RepositionEntry();
+            candidate = sut.RepositionEntry();
             Assert.Equal(new Point(5, 2), candidate.Origin);
         }
 
@@ -179,8 +204,49 @@ namespace AlphabetSoup.Core.Test {
                 Direction = Directions.W
             };
             var sut = SetupIntersectionManager(existing, candidate);
-            sut.RepositionEntry();
+            candidate = sut.RepositionEntry();
             Assert.Equal(new Point(11, 4), candidate.Origin);
+        }
+
+        [Fact]
+        public void RepositionEntry() {
+            WordEntry existing = new WordEntry {
+                Name = "SAGRARIO",
+                X = 2,
+                Y = 3,
+                Direction = Directions.NE
+            };
+            WordEntry candidate = new WordEntry {
+                Name = "BUSCADA",
+                X = 8,
+                Y = 4,
+                Direction = Directions.N
+            };
+            var sut = SetupIntersectionManager(existing, candidate);
+            candidate = sut.RepositionEntry();
+            Assert.Equal(new Point(2, 1), candidate.Origin);
+        }
+
+        [Fact]
+        public void GetIntersectionAndReposition() {
+            WordEntry existing = new WordEntry {
+                Name = "RETOBADO",
+                X = 8,
+                Y = 3,
+                Direction = Directions.NE
+            };
+            WordEntry candidate = new WordEntry {
+                Name = "CAMBIZO",
+                X = 9,
+                Y = 4,
+                Direction = Directions.E
+            };
+            var sut = SetupIntersectionManager(existing, candidate);
+            sut.GetIntersection();
+            Assert.Collection(sut, x => Assert.Equal(new Point(9, 4), x));
+            candidate = sut.RepositionEntry();
+            Assert.Equal(new Point(5, 6), candidate.Origin);
+
         }
 
         private IntersectionManager SetupIntersectionManager(WordEntry existing, WordEntry candidate) {

@@ -81,6 +81,7 @@ namespace AlphabetSoup.Core
         /// <returns></returns>
         public IEnumerable<Point> GetIntersection() {
             Clear();
+            CommonLetters.Clear();
             ExistingRange = new Range();
             CandidateRange = new Range();
             for (int i = 0; i < Existing.Name.Length; i++) {
@@ -141,22 +142,23 @@ namespace AlphabetSoup.Core
         /// Compute and set the new <see cref="WordEntry.Origin"/> of the <see cref="Candidate"/> entry, so this entry intersects in the common letter
         /// </summary>
         /// <exception cref="InvalidOperationException">If both entries do not intersect or do not have common letters</exception>
-        public bool RepositionEntry() {
+        public WordEntry RepositionEntry() {
             if (!Intersects)
                 throw new InvalidOperationException("Can't reposition an entry that do not intersects with others");
             if (!GetCommonLetters()) {
                 Logger.LogWarning($"Words {Existing} and {Candidate} intersect but don't have common letters");
-                return false;
+                return null;
             }
+            bool reposition = false;
+            WordEntry repositionedWord = null;
             if (Overlaps) {
                 Logger.LogInformation($"Words {Existing} and {Candidate} overlap {Count} common letters");
                 Point target = Existing.Coordinate(ExistingRange.Init);
                 int increment = Candidate.Direction.IsReverse() ? 1 : 0;
                 Point delta = target.Delta(Candidate.Coordinate(CandidateRange.Init + increment));
-                Candidate.Translate(delta);
-                Logger.LogWarning($"Candidate repositioned: {Candidate}");
-                bool insideBoundaries = CheckBoundaries(Candidate.Origin);
-                return insideBoundaries && !IntersectsWithOthers(Soup.UsedWords.Values);
+                repositionedWord = Candidate.Translate(delta);
+                bool insideBoundaries = CheckBoundaries(repositionedWord.Origin);
+                reposition = insideBoundaries && !IntersectsWithOthers(repositionedWord, Soup.UsedWords.Values);
             } else {
                 int i = 0;
                 bool insideBoundaries = false;
@@ -164,22 +166,30 @@ namespace AlphabetSoup.Core
                 do {
                     Point target = Existing.Coordinate(CommonLetters[i].ExistingPos);
                     Point delta = target.Delta(Candidate.Coordinate(CommonLetters[i].CandidatePos));
-                    Candidate.Translate(delta);
-                    Logger.LogWarning($"Candidate repositioned: {Candidate}");
-                    insideBoundaries = CheckBoundaries(Candidate.Origin);
+                    repositionedWord = Candidate.Translate(delta);
+                    Logger.LogDebug($"Try to reposition to: {repositionedWord}");
+                    insideBoundaries = CheckBoundaries(repositionedWord.Origin);
                     i++;
                 } while (!insideBoundaries && i < CommonLetters.Count);
-                return insideBoundaries && !IntersectsWithOthers(Soup.UsedWords.Values);
+                reposition = insideBoundaries && !IntersectsWithOthers(repositionedWord, Soup.UsedWords.Values);
             }
+            if (reposition) {
+                Logger.LogWarning($"Candidate repositioned: {repositionedWord}");
+                return repositionedWord;
+            }
+            return null;
+
         }
 
         /// <summary>
         /// Returns <c>true</c> if the <see cref="Candidate"/> entry intersects with other entries besides the <see cref="Existing"/>
         /// </summary>
+        /// <param name="candidate">Candidate word to check with existing entries</param>
         /// <param name="entries">List of entries already set up in the <see cref="Soup"/></param>
-        public bool IntersectsWithOthers(IEnumerable<WordEntry> entries) {
+        public bool IntersectsWithOthers(WordEntry candidate, IEnumerable<WordEntry> entries) {
             foreach (WordEntry entry in entries) {
-                if (entry.Name != Existing.Name && entry.IntersectWith(Candidate)) {
+                if (entry.Name != Existing.Name && entry.IntersectWith(candidate)) {
+                    Logger.LogDebug($"Also intersects with {entry}");
                     return true;
                 }
             }
@@ -187,8 +197,11 @@ namespace AlphabetSoup.Core
         }
         private bool CheckBoundaries(Point origin) {
             var size = new Point(Soup.Matrix.GetUpperBound(0), Soup.Matrix.GetUpperBound(1));
-            return origin.X >= 0 && origin.X < size.X &&
-                   origin.Y >= 0 && origin.Y < size.Y;
+            bool inside = origin.X >= 0 && origin.X < size.X &&
+                          origin.Y >= 0 && origin.Y < size.Y;
+            if (!inside)
+                Logger.LogDebug("Is not in boundaries");
+            return inside;
         }
 
         private (Range left, Range right, bool hasCommon) FindCommonLetters(WordEntry a, WordEntry b) {
@@ -231,7 +244,7 @@ namespace AlphabetSoup.Core
 
         }
 
-        public class CommonLetter {
+        public class CommonLetter : IEquatable<CommonLetter> {
             /// <summary>
             /// Common letter 
             /// </summary>
@@ -246,6 +259,38 @@ namespace AlphabetSoup.Core
             /// In which position is the letter in the candidate word
             /// </summary>
             public int CandidatePos { get; set; }
+
+            public bool Equals(CommonLetter other) {
+                return Letter == other.Letter &&
+                       ExistingPos == other.ExistingPos &&
+                       CandidatePos == other.CandidatePos;
+            }
+
+            public static bool operator ==(CommonLetter left, CommonLetter right) {
+                return left.Letter == right.Letter &&
+                       left.ExistingPos == right.ExistingPos &&
+                       left.CandidatePos == right.CandidatePos;
+            }
+
+            public static bool operator !=(CommonLetter left, CommonLetter right) {
+                return left.Letter != right.Letter ||
+                       left.ExistingPos != right.ExistingPos ||
+                       left.CandidatePos != right.CandidatePos;
+            }
+
+            public override bool Equals(object obj) {
+                if (obj == null || !(obj is CommonLetter))
+                    throw new InvalidCastException($"{nameof(obj)} must be not null and of type {GetType().Name}");
+                return Equals((CommonLetter)obj);
+            }
+
+            public override int GetHashCode() {
+                int hash = 17;
+                hash = hash * 23 + Letter;
+                hash = hash * 23 + ExistingPos;
+                hash = hash * 23 + CandidatePos;
+                return hash;
+            }
         }
     }
 }
