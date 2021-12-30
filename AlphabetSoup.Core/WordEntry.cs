@@ -33,7 +33,14 @@ namespace AlphabetSoup.Core {
         /// Returns the coordinate of the first letter of the word, independently if it's straight direction or reverse direction
         /// </summary>
         public Point AbsoluteOrigin() {
-            return Direction.IsReverse() ? EndingCoordinate() : new Point(X, Y);
+            return Direction.IsReverse() ? EndingCoordinate() : Origin;
+        }
+
+        /// <summary>
+        /// Returns the coordinate of the last letter of the word, independently if it's straight direction or reverse direction
+        /// </summary>
+        public Point AbsoluteEnding() {
+            return Direction.IsReverse() ? Origin : EndingCoordinate();
         }
 
         public override string ToString() {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace AlphabetSoup.Core.Test {
@@ -45,7 +46,8 @@ namespace AlphabetSoup.Core.Test {
         }
 
         private SoupGenerator InitGenerator() {
-            return TestDataGenerator.InitGenerator();
+            var generator = IoC.Services.GetService<TestDataGenerator>();
+            return generator.InitGenerator();
         }
 
         protected string ReadTestFile(string path) {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,10 +12,9 @@ namespace AlphabetSoup.Core {
         public string Name => "Check if words will be truncated because there is not enough space from origin coordinate to the end of the soup";
 
         public bool Check(Soup soup, WordEntry entry) {
-            Point pt = entry.EndingCoordinate();
-            bool haveHorizontalSpace = pt.X >= 0 && pt.X < soup.Matrix.GetLength(0);
-            bool haveVerticalSpace = pt.Y >= 0 && pt.Y < soup.Matrix.GetLength(1);
-            return haveHorizontalSpace && haveVerticalSpace;
+            var boundaries = new BoundariesManager(NullLogger<BoundariesManager>.Instance);
+            boundaries.Soup = soup;
+            return boundaries.Check(entry);
         }
     }
 

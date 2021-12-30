@@ -13,7 +13,7 @@ namespace AlphabetSoup.Core.Test {
         [InlineData(5, 13, Directions.NW)]
         [InlineData(5, 5, Directions.SW)]
         [InlineData(5, 9, Directions.W)]
-        void AbsoluteOriginTest(int x, int y, Directions direction) {
+        public void AbsoluteOriginTest(int x, int y, Directions direction) {
             var sut = new WordEntry {
                 X = 9,
                 Y = 9,
@@ -21,7 +21,22 @@ namespace AlphabetSoup.Core.Test {
                 Direction = direction
             };
             Assert.Equal(new Point(x, y), sut.AbsoluteOrigin());
+        }
 
+        [Theory]
+        [InlineData(13, 9, Directions.E)]
+        [InlineData(9, 9, Directions.S)]
+        [InlineData(9, 9, Directions.NW)]
+        [InlineData(9, 9, Directions.SW)]
+        [InlineData(9, 9, Directions.W)]
+        public void AbsoluteEndingTest(int x, int y, Directions direction) {
+            var sut = new WordEntry {
+                X = 9,
+                Y = 9,
+                Name = "HELLO",
+                Direction = direction
+            };
+            Assert.Equal(new Point(x, y), sut.AbsoluteEnding());
         }
 
         [Theory]

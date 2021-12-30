@@ -9,7 +9,7 @@ namespace AlphabetSoup.Core
     /// <summary>
     /// Information and management about the intersection of two <see cref="WordEntry"/> entries
     /// </summary>
-    public class IntersectionManager : List<Point> {
+    public class IntersectionManager : List<Point>, IIntersectionManager {
 
         /// <summary>
         /// Returns <c>true</c> if the <see cref="Existing"/> and the <see cref="Candidate"/> entries intersects in one point (one letter)

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace AlphabetSoup.Core.Test {
@@ -9,7 +10,9 @@ namespace AlphabetSoup.Core.Test {
         
         private Soup soup;
         public IntersectionTest() {
-            soup = TestDataGenerator.InitGenerator().Init().Soup;
+            var dataGenerator = IoC.Services.GetService<TestDataGenerator>();
+            SoupGenerator generator = dataGenerator.InitGenerator(allowedDirections: Directions.E | Directions.N);
+            soup = generator.Init().Soup;
         }
 
         [Fact]

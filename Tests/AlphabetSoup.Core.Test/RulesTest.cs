@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace AlphabetSoup.Core.Test {
@@ -29,6 +29,7 @@ namespace AlphabetSoup.Core.Test {
         [InlineData(3, 9, Directions.W)]
         [InlineData(8, 8, Directions.NE)]
         [InlineData(8, 6, Directions.N)]
+        [InlineData(0, -1, Directions.N)]
         public void DontHaveSpaceToPutNewWord(int x, int y, Directions direction) {
             Soup soup = InitSoup();
             WordEntry entry = new WordEntry {
@@ -55,7 +56,8 @@ namespace AlphabetSoup.Core.Test {
 
         [Fact]
         public void IsOverlappedRule() {
-            SoupGenerator generator = TestDataGenerator.InitGenerator(allowedDirections: Directions.E | Directions.N);
+            var dataGenerator = IoC.Services.GetService<TestDataGenerator>();
+            SoupGenerator generator = dataGenerator.InitGenerator(allowedDirections: Directions.E | Directions.N);
             Soup soup = generator.Init().Create();
 
             IRule rule = new NotOverlapped();
@@ -69,9 +71,9 @@ namespace AlphabetSoup.Core.Test {
         }
 
         [Theory]
-        [MemberData(nameof(TestDataGenerator.InLengthRangeWords), 4, 6, MemberType = typeof(TestDataGenerator))]
+        [ClassData(typeof(InLengthRangeWords))]
         public void MatchLengthRule(bool expected, string word) {
-            IRule rule = new MatchLengthRange(4, 6);
+            IRule rule = new MatchLengthRange(InLengthRangeWords.min, InLengthRangeWords.max);
             Assert.Equal(expected, rule.Check(null, new WordEntry { Name = word }));
         }
 

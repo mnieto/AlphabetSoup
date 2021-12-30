@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AlphabetSoup.Core.Test")]
 
 namespace AlphabetSoup.Core {
-    internal interface ISoupGenerator {
+    public interface ISoupGenerator {
         Soup Soup { get; }
         Soup Create();
         ISoupGenerator Init();
@@ -17,7 +17,7 @@ namespace AlphabetSoup.Core {
     /// <summary>
     /// Generate a new alphabet soup following the directives set in the <see cref="Options"/>
     /// </summary>
-    internal class SoupGenerator : ISoupGenerator {
+    public class SoupGenerator : ISoupGenerator {
 
         /// <summary>
         /// List of words used as dictionary to pick words from
@@ -44,7 +44,9 @@ namespace AlphabetSoup.Core {
         internal Options Options { get; private set; }
 
         private ILogger<SoupGenerator> Logger { get; set; }
-        private IntersectionManager IntersectionManager { get; set; }
+        private IIntersectionManager IntersectionManager { get; set; }
+        private IBoundariesManager Boundaries { get; set; }
+
         /// <summary>
         /// Generated aphabet <see cref="Soup"/>
         /// </summary>
@@ -56,10 +58,14 @@ namespace AlphabetSoup.Core {
         /// Constructor
         /// </summary>
         /// <param name="options"><see cref="Options"/> used to configure this generator</param>
-        internal SoupGenerator(Options options, IntersectionManager intersectionManager, ILogger<SoupGenerator> logger) {
+        internal SoupGenerator(Options options, IIntersectionManager intersectionManager, IBoundariesManager boundaries, ILogger<SoupGenerator> logger) {
             Options = options ?? throw new ArgumentNullException(nameof(options));
             IntersectionManager = intersectionManager ?? throw new ArgumentNullException(nameof(intersectionManager));
+            Boundaries = boundaries ?? throw new ArgumentNullException(nameof(boundaries));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Soup = new Soup();
+            IntersectionManager.Soup = Soup;
+            Boundaries.Soup = Soup;
 
             LanguageData data = LoadWordsFromFile();
             if (Options.Words == null) {
@@ -78,7 +84,8 @@ namespace AlphabetSoup.Core {
         /// Constructor
         /// </summary>
         /// <param name="options"><see cref="Options"/> used to configure this generator</param>
-        public SoupGenerator(IOptions<Options> options, IntersectionManager intersectionManager, ILogger<SoupGenerator> logger): this(options?.Value, intersectionManager, logger) { }
+        public SoupGenerator(IOptions<Options> options, IIntersectionManager intersectionManager, IBoundariesManager boundaries, ILogger<SoupGenerator> logger): 
+            this(options?.Value, intersectionManager, boundaries, logger) { }
 
         /// <summary>
         /// Initialize the Alphabet Soup with random data, with the size and language settings specified in the <see cref="Options"/>
@@ -86,7 +93,6 @@ namespace AlphabetSoup.Core {
         /// <returns>Initialized <see cref="Soup"/> with random data</returns>
         public ISoupGenerator Init() {
             Logger.LogInformation($"Initializing generator for a {Options.Size}x{Options.Size} Soup and {Options.NumWords} words.");
-            Soup = new Soup();
             Soup.Matrix = new char[Options.Size, Options.Size];
             Soup.ShadowMatrix = new bool[Options.Size, Options.Size];
             for (int x = 0; x < Options.Size; x++) {
